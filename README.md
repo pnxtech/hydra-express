@@ -10,7 +10,7 @@ For more information on Hydra see: [Hydra](https://github.com/flywheelsports/fws
 To install and use in another project:
 
 ```shell
-$ npm i @flywheelsports/hydra-express
+$ npm i @flywheelsports/fwsp-hydra-express
 ```
 
 To contribute and develop locally:
