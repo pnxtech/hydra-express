@@ -1,5 +1,4 @@
-![logo](hydra-express.jpg)
-# Hydra / Express  
+![logo](hydra-express.png)
 
 A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.
 
