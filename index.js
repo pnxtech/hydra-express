@@ -483,6 +483,11 @@ class HydraExpress {
     this.server.listen(this.config.hydra.servicePort, () => {
       this.registerRoutesCallback && this.registerRoutesCallback();
 
+      app.get(`/_config/${this.config.hydra.serviceName}`, (req, res) => {
+        this.sendResponse(HTTP_OK, res, {result: this.config});
+      });
+      hydra.registerRoutes([`[GET]/_config/${this.config.hydra.serviceName}`]);
+
       app.use('/*', (req, res) => {
         res.sendFile(path.resolve(this.config.appPath + '/index.html'));
       });

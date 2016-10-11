@@ -34,7 +34,8 @@
       "single"
     ],
     "semi": [2, "always"],
-    "no-extra-semi": 2
+    "no-extra-semi": 2,
+    "one-var-declaration-per-line": 2
   },
   "env": {
     "node": true,

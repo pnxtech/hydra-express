@@ -59,6 +59,14 @@ Additionally, log messages of type `fatal` or `error` are sent to hydra-core for
 
 A hydra-express service can serve static web content. Simply create a folder called `public` and copy website files into it. An example can be found in the `demo/webserver` folder.
 
+## Built-in routes
+
+Built-in routes are prefixed with an underscore.
+
+Route | Method | Description
+--- | ---| ---
+/_config/{service-name} | GET | Returns the config object used by this service
+
 ## Demo
 
 The demo folder includes a simple demonstration of hydra-express. In the folder you'll find the following files `red-service.js`, `green-service.js` and `blue-service.js`. Those files each launch a service which can respond to the a `hello` API call via a web browser or curl.
