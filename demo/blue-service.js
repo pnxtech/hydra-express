@@ -12,9 +12,7 @@ hydraExpress.init(config, version, () => {
   });
 })
   .then((serviceInfo) => {
-    // console.log('serviceInfo', serviceInfo);
     let hydra = hydraExpress.getHydra();
-    hydra.openPublisherChannel('hydra:test');
     setInterval(() => {
       let message = hydra.createUMFMessage({
         to: 'hydra:test',
@@ -23,7 +21,7 @@ hydraExpress.init(config, version, () => {
           timestamp: parseInt(new Date().getTime() / 1000)
         }
       });
-      hydra.publishToChannel('hydra:test', message);
+      hydra.sendMessage(message);
     }, 5000);
   })
   .catch((err) => {
