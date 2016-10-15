@@ -12,10 +12,8 @@ hydraExpress.init(config, version, () => {
   });
 })
   .then((serviceInfo) => {
-    // console.log('serviceInfo', serviceInfo);
     let hydra = hydraExpress.getHydra();
-    hydra.openSubscriberChannel('hydra:test');
-    hydra.subscribeToChannel('hydra:test', function(message) {
+    hydra.on('message', function(message) {
       console.log(message);
     });
   })
