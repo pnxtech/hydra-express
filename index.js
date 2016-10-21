@@ -12,6 +12,7 @@ let serverResponse = new ServerResponse();
 const bodyParser = require('body-parser');
 const bunyan = require('bunyan');
 const Bunyan2Loggly = require('bunyan-loggly');
+const bunyantcp = require('bunyan-logstash-tcp');
 const cluster = require('cluster');
 const cors = require('cors');
 const express = require('express');
@@ -209,7 +210,8 @@ class HydraExpress {
       logPath: logFilePath,
       logToConsole: (this.config.environment === 'development'),
       logToLoggly: (this.config.logglyConfig.token != ''),
-      logglyConfig: this.config.logglyConfig
+      logglyConfig: this.config.logglyConfig,
+      logstashConfig: this.config.logstashConfig
     };
     let prettyStdOut = new PrettyStream();
     prettyStdOut.pipe(process.stdout);
@@ -237,6 +239,12 @@ class HydraExpress {
         level: 'info',
         type: 'raw',
         stream: prettyStdOut
+      });
+    }
+    if (options.logstashConfig) {
+      logConfig.streams.push({
+        type: 'raw',
+        stream: bunyantcp.createStream(options.logstashConfig)
       });
     }
     this.appLogger = bunyan.createLogger(logConfig);
