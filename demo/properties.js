@@ -12,7 +12,7 @@ exports.value = {
     subdomain: 'fws'
   },
   hydra: {
-    serviceName: '',
+    serviceName: 'hello-service',
     serviceDescription: 'Service Demo',
     serviceIP: '',
     servicePort: 0,

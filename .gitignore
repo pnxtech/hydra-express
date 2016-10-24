@@ -2,4 +2,4 @@
 *.log
 scratch.*
 node_modules/
-properties.js
+./properties.js
