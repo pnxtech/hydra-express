@@ -15,7 +15,7 @@ exports.value = {
     serviceName: 'hello-service',
     serviceDescription: 'Service Demo',
     serviceIP: '',
-    servicePort: 3000,
+    servicePort: 0,
     serviceType: 'demo',
     redis: {
       url: 'redis',

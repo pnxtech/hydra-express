@@ -56,7 +56,6 @@ class HydraExpress {
     let missingFields = [];
     let requiredMembers = {
       'appServiceName': '',
-      'jwtPublicCert': '',
       'cluster': '',
       'maxSockets': '',
       'environment': '',
