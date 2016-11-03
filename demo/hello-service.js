@@ -4,7 +4,7 @@ const hydraExpress = require('../index');
 
 hydraExpress.init(config, version, () => {
   hydraExpress.registerRoutes({
-    '/v1/hello/': require('./hello-v1-api')
+    '/v1/hello': require('./hello-v1-api')
   });
 })
   .then((serviceInfo) => {

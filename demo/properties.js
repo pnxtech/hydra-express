@@ -1,5 +1,5 @@
 exports.value = {
-  appServiceName: 'app-service',
+  appServiceName: 'hello-service',
   cluster: false,
   maxSockets: 500,
   environment: 'development',
@@ -18,8 +18,9 @@ exports.value = {
     servicePort: 0,
     serviceType: 'demo',
     redis: {
-      url: '127.0.0.1',
-      port: 6379
+      url: 'redis',
+      port: 6379,
+      db: 15
     }
   }
 };
