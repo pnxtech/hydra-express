@@ -45,7 +45,7 @@ In the example above, the `serviceInfo` on the then statement returns an object 
 
 ## Logging and error reporting
 
-HydraExpress includes a `log` member which allows you to log to both the console and log file.  
+HydraExpress includes a `log` member which allows you to log into to both the console and log file.  
 
 ```javascript
 hydraExpress.log('error', message);
@@ -69,7 +69,7 @@ Route | Method | Description
 
 ## Demo
 
-The demo folder includes a simple demonstration of hydra-express. In the folder you'll find the following files `red-service.js`, `green-service.js` and `blue-service.js`. Those files each launch a service which can respond to the a `hello` API call via a web browser or curl.
+The demo folder includes a simple demonstration of hydra-express. In the folder you'll find the following files `red-service.js`, `green-service.js` and `blue-service.js`. Those files each launch a service which can respond to the `hello` API call via a web browser or curl.
 
 ```
 http://localhost:{port}/v1/{color}/hello
@@ -134,7 +134,7 @@ shutdown()
 ```
 
 #### getExpress
-Retrieve the underlying ExpressJS object
+Retrieves the underlying ExpressJS object
 ```javascript
 /**
 * @name getExpress
@@ -145,7 +145,7 @@ getExpress()
 ```
 
 #### getHydra
-Retrieve the underlying Hydra object
+Retrieves the underlying Hydra object
 ```javascript
 /**
 * @name getHydra
