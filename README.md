@@ -9,7 +9,7 @@ For more information on Hydra see: [Hydra](https://github.com/flywheelsports/fws
 To install and use in another project:
 
 ```shell
-$ npm i @flywheelsports/fwsp-hydra-express
+$ npm install fwsp-hydra-express
 ```
 
 To contribute and develop locally:
@@ -26,7 +26,7 @@ $ npm install
 
 const config = require('./config/properties').value;
 const version = require('./package.json').version;
-const hydraExpress = require('@flywheelsports/fwsp-hydra-express');
+const hydraExpress = require('fwsp-hydra-express');
 
 function registerRoutesCallback() {
   hydraExpress.registerRoutes('/v1/offers', require('./offers-v1-api'));
