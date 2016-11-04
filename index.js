@@ -240,13 +240,28 @@ class HydraExpress {
         stream: prettyStdOut
       });
     }
+    let tcpStream;
     if (options.logstashConfig) {
+      let defaults = {
+        'max_connection_retries': 12,
+        'retry_interval': 10000
+      };
+      tcpStream = bunyantcp.createStream(Object.assign(defaults, options.logstashConfig));
       logConfig.streams.push({
         type: 'raw',
-        stream: bunyantcp.createStream(options.logstashConfig)
+        stream: tcpStream
       });
     }
+
     this.appLogger = bunyan.createLogger(logConfig);
+
+    if (tcpStream) {
+      tcpStream.on('error', (err) => this.appLogger.error('logstash-tcp stream error', err));
+      tcpStream.on('timeout', () => this.appLogger.error('logstash-tcp timeout'));
+      tcpStream.on('connect', () => this.appLogger.info('logstash-tcp connect'));
+      tcpStream.on('close', () => this.appLogger.error('logstash-tcp close'));
+    }
+    this.appLogger.info('logging ready');
   }
 
   /**
