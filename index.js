@@ -1,3 +1,4 @@
+/*eslint-disable no-unused-vars */
 /**
 * HydraExpress Module
 * @description A module that binds Hydra and ExpressJS. This simplifies building API enabled microservices.
@@ -194,7 +195,7 @@ class HydraExpress {
    * @private
    */
   loggerInit() {
-    let lowercaseServiceName;
+    let tcpStream, lowercaseServiceName;
     let logFilePath = '';
 
     lowercaseServiceName = this.config.appServiceName || 'service';
@@ -240,7 +241,7 @@ class HydraExpress {
         stream: prettyStdOut
       });
     }
-    let tcpStream;
+
     if (options.logstashConfig) {
       let defaults = {
         'max_connection_retries': 12,
