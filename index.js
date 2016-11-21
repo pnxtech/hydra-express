@@ -56,13 +56,9 @@ class HydraExpress {
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
-      'environment': '',
       'hydra': {
         'serviceName': '',
-        'serviceDescription': '',
-        'serviceIP': '',
-        'servicePort': '',
-        'serviceType': ''
+        'serviceDescription': ''
       },
       'version': '',
       'registerRoutesCallback': ''
@@ -100,16 +96,27 @@ class HydraExpress {
   */
   init(config) {
     return new Promise((resolve, reject) => {
+
+      config.serviceIP = config.serviceIP || '';
+      config.servicePort = config.servicePort || 0;
+      config.serviceType = config.serviceType || '';
+
+      if (!config.redis) {
+        reject(new Error('Config missing redis block'));
+        return;
+      }
+
       let missingFields = this.validateConfig(config);
       if (missingFields.length) {
-        reject(new Error(`Missing fields: ${missingFields.join(' ')}`));
+        reject(new Error(`Config missing fields: ${missingFields.join(' ')}`));
       } else if (!config.version) {
-        reject(new Error('Missing version parameter'));
+        reject(new Error('Config missing version parameter'));
       } else if (!config.registerRoutesCallback) {
-        reject(new Error('Missing registerRoutesCallback parameter'));
+        reject(new Error('Config missing registerRoutesCallback parameter'));
       } else {
         config.hydra.serviceVersion = config.version;
         this.config = config;
+        this.config.environment = this.config.environment || 'development';
         this.registerRoutesCallback = config.registerRoutesCallback;
 
         /**
