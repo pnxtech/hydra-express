@@ -1,7 +1,5 @@
 exports.value = {
   environment: 'development',
-  logRequestHeader: true,
-  logOutboundRequest: true,
   hydra: {
     serviceName: 'test-service',
     serviceDescription: 'Raison d\'etre',

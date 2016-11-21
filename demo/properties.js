@@ -2,7 +2,6 @@ exports.value = {
   environment: 'development',
   jwtPublicCert: 'service.pub',
   logPath: '',
-  logRequestHeader: true,
   logOutboundRequest: true,
   hydra: {
     serviceName: 'hello-service',

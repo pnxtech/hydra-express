@@ -57,9 +57,6 @@ class HydraExpress {
     let missingFields = [];
     let requiredMembers = {
       'environment': '',
-      'logPath': '',
-      'logRequestHeader': '',
-      'logOutboundRequest': '',
       'hydra': {
         'serviceName': '',
         'serviceDescription': '',
