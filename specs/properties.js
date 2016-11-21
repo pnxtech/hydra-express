@@ -1,16 +1,5 @@
 exports.value = {
-  appServiceName: 'test-service',
-  jwtPublicCert: '',
-  cluster: false,
-  maxSockets: 500,
   environment: 'development',
-  logPath: '',
-  logRequestHeader: true,
-  logOutboundRequest: true,
-  logglyConfig: {
-    token: '{sometoken}',
-    subdomain: 'fws'
-  },
   hydra: {
     serviceName: 'test-service',
     serviceDescription: 'Raison d\'etre',

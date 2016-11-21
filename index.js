@@ -56,23 +56,9 @@ class HydraExpress {
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
-      'appServiceName': '',
-      'cluster': '',
-      'maxSockets': '',
-      'environment': '',
-      'logPath': '',
-      'logRequestHeader': '',
-      'logOutboundRequest': '',
-      'logglyConfig': {
-        'token': '',
-        'subdomain': ''
-      },
       'hydra': {
         'serviceName': '',
-        'serviceDescription': '',
-        'serviceIP': '',
-        'servicePort': '',
-        'serviceType': ''
+        'serviceDescription': ''
       },
       'version': '',
       'registerRoutesCallback': ''
@@ -110,16 +96,32 @@ class HydraExpress {
   */
   init(config) {
     return new Promise((resolve, reject) => {
+
+      config.serviceIP = config.serviceIP || '';
+      config.servicePort = config.servicePort || 0;
+      config.serviceType = config.serviceType || '';
+
+      if (!config.hydra) {
+        reject(new Error('Config missing hydra block'));
+        return;
+      }
+
+      if (!config.hydra.redis) {
+        reject(new Error('Config missing redis block'));
+        return;
+      }
+
       let missingFields = this.validateConfig(config);
       if (missingFields.length) {
-        reject(new Error(`Missing fields: ${missingFields.join(' ')}`));
+        reject(new Error(`Config missing fields: ${missingFields.join(' ')}`));
       } else if (!config.version) {
-        reject(new Error('Missing version parameter'));
+        reject(new Error('Config missing version parameter'));
       } else if (!config.registerRoutesCallback) {
-        reject(new Error('Missing registerRoutesCallback parameter'));
+        reject(new Error('Config missing registerRoutesCallback parameter'));
       } else {
         config.hydra.serviceVersion = config.version;
         this.config = config;
+        this.config.environment = this.config.environment || 'development';
         this.registerRoutesCallback = config.registerRoutesCallback;
 
         /**
@@ -198,7 +200,7 @@ class HydraExpress {
     let tcpStream, lowercaseServiceName;
     let logFilePath = '';
 
-    lowercaseServiceName = this.config.appServiceName || 'service';
+    lowercaseServiceName = this.config.hydra.serviceName || 'service';
     if (this.config.logPath && this.config.logPath.length > 0) {
       logFilePath = this.config.logPath;
     } else {
@@ -209,8 +211,6 @@ class HydraExpress {
       name: lowercaseServiceName,
       logPath: logFilePath,
       logToConsole: (this.config.environment === 'development'),
-      logToLoggly: (this.config.logglyConfig.token != ''),
-      logglyConfig: this.config.logglyConfig,
       logstashConfig: this.config.logstashConfig
     };
     let prettyStdOut = new PrettyStream();
@@ -226,14 +226,6 @@ class HydraExpress {
         }
       ]
     };
-    if (options.logToLoggly) {
-      let logglyStream = new Bunyan2Loggly(options.logglyConfig);
-      logConfig.streams.push({
-        level: 'info',
-        type: 'raw',
-        stream: logglyStream
-      });
-    }
     if (options.logToConsole) {
       logConfig.streams.push({
         level: 'info',
@@ -314,7 +306,7 @@ class HydraExpress {
   start(resolve, reject) {
     this.loggerInit();
 
-    if (this.config.cluster !== true) {
+    if (!this.config.cluster || this.config.cluster !== true) {
       hydra.init(this.config.hydra)
         .then(() => {
           return hydra.registerService();
@@ -425,7 +417,7 @@ class HydraExpress {
     */
     const ninetyDaysInMilliseconds = moment.duration(90, 'days').asMilliseconds();
     app.use(helmet());
-    app.use(helmet.hidePoweredBy({setTo: `${this.config.appServiceName}/${this.config.version}`}));
+    app.use(helmet.hidePoweredBy({setTo: `${this.config.hydra.serviceName}/${this.config.version}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
     app.use(bodyParser.urlencoded({extended: false}));
@@ -458,6 +450,7 @@ class HydraExpress {
     app.set('port', this.config.servicePort);
 
     if (this.config.environment !== 'development') {
+      this.config.maxSockets = this.config.maxSockets || 500;
       if (this.config.maxSockets) {
         // increase max socket when used outside of development
         http.globalAgent.maxSockets = this.config.maxSockets;
@@ -660,7 +653,10 @@ class IHydraExpress extends HydraExpress {
   */
   init(config, version, registerRoutesCallback) {
     let inner = {};
-    if (version) {
+    if (typeof version === 'function') {
+      registerRoutesCallback = version;
+      inner.version = config.version || require('./package.json').version;
+    } else if (version) {
       inner.version = version;
     }
     if (registerRoutesCallback) {

@@ -1,16 +1,4 @@
 exports.value = {
-  appServiceName: 'hello-service',
-  cluster: false,
-  maxSockets: 500,
-  environment: 'development',
-  jwtPublicCert: 'service.pub',
-  logPath: '',
-  logRequestHeader: true,
-  logOutboundRequest: true,
-  logglyConfig: {
-    token: '',
-    subdomain: 'fws'
-  },
   hydra: {
     serviceName: 'hello-service',
     serviceDescription: 'Service Demo',

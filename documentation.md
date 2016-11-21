@@ -197,7 +197,6 @@ Use the following configuration template (config/properties.js) as a starting po
 
 ```javascript
 exports.value = {
-  appServiceName: 'test-service',
   jwtPublicCert: '',
   cluster: false,
   maxSockets: 500,
@@ -205,10 +204,6 @@ exports.value = {
   logPath: '',
   logRequestHeader: true,
   logOutboundRequest: true,
-  logglyConfig: {
-    token: '{sometoken}',
-    subdomain: 'fws'
-  },
   hydra: {
     serviceName: 'test-service',
     serviceDescription: 'Raison d\'etre',
@@ -227,7 +222,6 @@ Let's look at each key in more detail:
 
 Key | Usage
 --- | ---
-appServiceName | The top level name of the service. This isn't used by Hydra Express. It's there for your own use.
 jwtPublicCert | The path to a public key used to validate JSON Web Tokens using middleware.
 cluster | If true then Hydra/Express will enter Node Cluster mode and use all available CPU cores.
 maxSockets | Maximum number of open socket connections.
@@ -235,7 +229,6 @@ environment | Node Environment
 logPath | The path to use for the service log file.
 logRequestHeader | If true, Hydra/Express will log request headers to the service log file.
 logOutboundRequest | If true, Hydra/Express will log outbound responses to the service log file.
-logglyConfig | Loggly configuration settings
 hydra.serviceName | The service name used by Hydra.
 hydra.serviceDescription | A description for the service. Used by monitoring software.
 hydra.serviceIP | The IP address to use with the service. If the value is equal to an empty string (''), then the machine's local IP will be used, otherwise a four segment IP address is expected (52.9.201.160).

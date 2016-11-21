@@ -43,7 +43,7 @@ describe('HydraExpress service', () => {
   }
 
   it('should be able to register an http route and call it', (done) => {
-    hydraExpress.init(config, version, registerRoutesCallback)
+    hydraExpress.init(config, registerRoutesCallback)
       .then((serviceInfo) => {
         request
           .get(`http://localhost:${serviceInfo.servicePort}/v1/info`)
