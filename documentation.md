@@ -197,7 +197,6 @@ Use the following configuration template (config/properties.js) as a starting po
 
 ```javascript
 exports.value = {
-  appServiceName: 'test-service',
   jwtPublicCert: '',
   cluster: false,
   maxSockets: 500,
@@ -223,7 +222,6 @@ Let's look at each key in more detail:
 
 Key | Usage
 --- | ---
-appServiceName | The top level name of the service. This isn't used by Hydra Express. It's there for your own use.
 jwtPublicCert | The path to a public key used to validate JSON Web Tokens using middleware.
 cluster | If true then Hydra/Express will enter Node Cluster mode and use all available CPU cores.
 maxSockets | Maximum number of open socket connections.

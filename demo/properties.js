@@ -1,5 +1,4 @@
 exports.value = {
-  appServiceName: 'hello-service',
   cluster: false,
   maxSockets: 500,
   environment: 'development',

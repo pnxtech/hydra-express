@@ -1,5 +1,4 @@
 exports.value = {
-  appServiceName: 'test-service',
   jwtPublicCert: '',
   cluster: false,
   maxSockets: 500,

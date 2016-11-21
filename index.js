@@ -56,7 +56,6 @@ class HydraExpress {
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
-      'appServiceName': '',
       'cluster': '',
       'maxSockets': '',
       'environment': '',
@@ -194,7 +193,7 @@ class HydraExpress {
     let tcpStream, lowercaseServiceName;
     let logFilePath = '';
 
-    lowercaseServiceName = this.config.appServiceName || 'service';
+    lowercaseServiceName = this.config.hydra.serviceName || 'service';
     if (this.config.logPath && this.config.logPath.length > 0) {
       logFilePath = this.config.logPath;
     } else {
@@ -411,7 +410,7 @@ class HydraExpress {
     */
     const ninetyDaysInMilliseconds = moment.duration(90, 'days').asMilliseconds();
     app.use(helmet());
-    app.use(helmet.hidePoweredBy({setTo: `${this.config.appServiceName}/${this.config.version}`}));
+    app.use(helmet.hidePoweredBy({setTo: `${this.config.hydra.serviceName}/${this.config.version}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
     app.use(bodyParser.urlencoded({extended: false}));
