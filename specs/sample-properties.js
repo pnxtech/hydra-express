@@ -1,5 +1,4 @@
 exports.value = {
-  jwtPublicCert: '',
   environment: 'development',
   logPath: '',
   logRequestHeader: true,

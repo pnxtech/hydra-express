@@ -198,6 +198,8 @@ Use the following configuration template (config/properties.js) as a starting po
 ```javascript
 exports.value = {
   jwtPublicCert: '',
+  cluster: false,
+  maxSockets: 500,
   environment: 'development',
   logPath: '',
   logRequestHeader: true,
