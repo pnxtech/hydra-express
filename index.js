@@ -56,7 +56,6 @@ class HydraExpress {
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
-      'cluster': '',
       'maxSockets': '',
       'environment': '',
       'logPath': '',
@@ -299,7 +298,7 @@ class HydraExpress {
   start(resolve, reject) {
     this.loggerInit();
 
-    if (this.config.cluster !== true) {
+    if (!this.config.cluster || this.config.cluster !== true) {
       hydra.init(this.config.hydra)
         .then(() => {
           return hydra.registerService();

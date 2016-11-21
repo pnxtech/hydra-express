@@ -1,6 +1,5 @@
 exports.value = {
   jwtPublicCert: '',
-  cluster: false,
   maxSockets: 500,
   environment: 'development',
   logPath: '',

@@ -1,5 +1,4 @@
 exports.value = {
-  cluster: false,
   maxSockets: 500,
   environment: 'development',
   jwtPublicCert: 'service.pub',
