@@ -56,7 +56,6 @@ class HydraExpress {
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
-      'maxSockets': '',
       'environment': '',
       'logPath': '',
       'logRequestHeader': '',
@@ -442,6 +441,7 @@ class HydraExpress {
     app.set('port', this.config.servicePort);
 
     if (this.config.environment !== 'development') {
+      this.config.maxSockets = this.config.maxSockets || 500;
       if (this.config.maxSockets) {
         // increase max socket when used outside of development
         http.globalAgent.maxSockets = this.config.maxSockets;
