@@ -1,6 +1,5 @@
 exports.value = {
   environment: 'development',
-  logPath: '',
   logRequestHeader: true,
   logOutboundRequest: true,
   hydra: {
