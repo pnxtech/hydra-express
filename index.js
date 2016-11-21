@@ -101,7 +101,12 @@ class HydraExpress {
       config.servicePort = config.servicePort || 0;
       config.serviceType = config.serviceType || '';
 
-      if (!config.redis) {
+      if (!config.hydra) {
+        reject(new Error('Config missing hydra block'));
+        return;
+      }
+
+      if (!config.hydra.redis) {
         reject(new Error('Config missing redis block'));
         return;
       }

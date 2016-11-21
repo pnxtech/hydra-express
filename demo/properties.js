@@ -1,5 +1,4 @@
 exports.value = {
-  environment: 'development',
   hydra: {
     serviceName: 'hello-service',
     serviceDescription: 'Service Demo',
