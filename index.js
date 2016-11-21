@@ -63,10 +63,6 @@ class HydraExpress {
       'logPath': '',
       'logRequestHeader': '',
       'logOutboundRequest': '',
-      'logglyConfig': {
-        'token': '',
-        'subdomain': ''
-      },
       'hydra': {
         'serviceName': '',
         'serviceDescription': '',
@@ -209,8 +205,6 @@ class HydraExpress {
       name: lowercaseServiceName,
       logPath: logFilePath,
       logToConsole: (this.config.environment === 'development'),
-      logToLoggly: (this.config.logglyConfig.token != ''),
-      logglyConfig: this.config.logglyConfig,
       logstashConfig: this.config.logstashConfig
     };
     let prettyStdOut = new PrettyStream();
@@ -226,14 +220,6 @@ class HydraExpress {
         }
       ]
     };
-    if (options.logToLoggly) {
-      let logglyStream = new Bunyan2Loggly(options.logglyConfig);
-      logConfig.streams.push({
-        level: 'info',
-        type: 'raw',
-        stream: logglyStream
-      });
-    }
     if (options.logToConsole) {
       logConfig.streams.push({
         level: 'info',

@@ -7,10 +7,6 @@ exports.value = {
   logPath: '',
   logRequestHeader: true,
   logOutboundRequest: true,
-  logglyConfig: {
-    token: '{sometoken}',
-    subdomain: 'fws'
-  },
   hydra: {
     serviceName: 'test-service',
     serviceDescription: 'Raison d\'etre',
