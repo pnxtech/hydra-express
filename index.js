@@ -641,8 +641,11 @@ class IHydraExpress extends HydraExpress {
   */
   init(config, version, registerRoutesCallback) {
     let inner = {};
-    if (version) {
-      inner.version = version;
+    if (typeof version === 'function') {
+      registerRoutesCallback = version;
+      inner.version = config.version || require('./package.json').version;
+    } else if (version) {
+      inner.version = config.version || version;
     }
     if (registerRoutesCallback) {
       inner.registerRoutesCallback = registerRoutesCallback;
