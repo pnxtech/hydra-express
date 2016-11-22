@@ -96,11 +96,6 @@ class HydraExpress {
   */
   init(config) {
     return new Promise((resolve, reject) => {
-
-      config.serviceIP = config.serviceIP || '';
-      config.servicePort = config.servicePort || 0;
-      config.serviceType = config.serviceType || '';
-
       if (!config.hydra) {
         reject(new Error('Config missing hydra block'));
         return;
@@ -110,6 +105,10 @@ class HydraExpress {
         reject(new Error('Config missing redis block'));
         return;
       }
+
+      config.hydra.serviceIP = config.hydra.serviceIP || '';
+      config.hydra.servicePort = config.hydra.servicePort || 0;
+      config.hydra.serviceType = config.hydra.serviceType || '';
 
       let missingFields = this.validateConfig(config);
       if (missingFields.length) {
