@@ -10,4 +10,7 @@ Checkout [Quick Start Guide](quickstart.md) and our [Yeoman generator](https://g
 
 Hydra-Express is built using Hydra "core" see: [Hydra](https://github.com/flywheelsports/fwsp-hydra)
 
-[Full documentation](documentation.md)
+* [Guick start guide](quickstart.md)
+* [EmpireNode presentation](https://youtu.be/j_yVf9Blcjo)
+* [Full documentation](documentation.md)
+
