@@ -9,3 +9,6 @@ Checkout [Quick Start Guide](quickstart.md) and our [Yeoman generator](https://g
 Hydra-Express is built using Hydra "core" see: [Hydra](https://github.com/flywheelsports/fwsp-hydra)
 
 [Full documentation](documentation.md)
+
+
+[![Join the chat at https://gitter.im/flywheelsports/fwsp-hydra-express](https://badges.gitter.im/flywheelsports/fwsp-hydra-express.svg)](https://gitter.im/flywheelsports/fwsp-hydra-express?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
