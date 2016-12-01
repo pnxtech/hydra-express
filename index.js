@@ -11,9 +11,6 @@ const ServerResponse = require('fwsp-server-response');
 let serverResponse = new ServerResponse();
 
 const bodyParser = require('body-parser');
-const bunyan = require('bunyan');
-const Bunyan2Loggly = require('bunyan-loggly');
-const bunyantcp = require('bunyan-logstash-tcp');
 const cluster = require('cluster');
 const cors = require('cors');
 const express = require('express');
@@ -35,6 +32,19 @@ const HTTP_SERVER_ERROR = 500;
 
 let app = express();
 
+let defaultLogger = () => {
+  let dump = (level, obj) => {
+    console.log(level.toUpperCase());
+    console.dir(obj, {colors: true, depth: null});
+  };
+  return {
+    fatal: obj => dump('FATAL', obj),
+    error: obj => dump('ERROR', obj),
+    debug: obj => dump('DEBUG', obj),
+    info: obj => dump('INFO', obj)
+  };
+};
+
 /**
 * @name HydraExpress
 * @summary HydraExpress class
@@ -42,8 +52,8 @@ let app = express();
 class HydraExpress {
   constructor() {
     this.config = null;
-    this.appLogger = null;
     this.server = null;
+    this.appLogger = defaultLogger();
   }
 
   /**
@@ -191,72 +201,6 @@ class HydraExpress {
   }
 
   /**
-   * @name loggerInit
-   * @summary Initialize logging facility.
-   * @private
-   */
-  loggerInit() {
-    let tcpStream, lowercaseServiceName;
-    let logFilePath = '';
-
-    lowercaseServiceName = this.config.hydra.serviceName || 'service';
-    if (this.config.logPath && this.config.logPath.length > 0) {
-      logFilePath = this.config.logPath;
-    } else {
-      logFilePath = `${process.cwd()}/${lowercaseServiceName}.log`;
-    }
-
-    let options = {
-      name: lowercaseServiceName,
-      logPath: logFilePath,
-      logToConsole: (this.config.environment === 'development'),
-      logstashConfig: this.config.logstashConfig
-    };
-    let prettyStdOut = new PrettyStream();
-    prettyStdOut.pipe(process.stdout);
-
-    let logConfig = {
-      name: options.name,
-      streams: [
-        {
-          level: 'info',
-          type: 'file',
-          path: options.logPath || process.cwd()
-        }
-      ]
-    };
-    if (options.logToConsole) {
-      logConfig.streams.push({
-        level: 'info',
-        type: 'raw',
-        stream: prettyStdOut
-      });
-    }
-
-    if (options.logstashConfig) {
-      let defaults = {
-        'max_connection_retries': 12,
-        'retry_interval': 10000
-      };
-      tcpStream = bunyantcp.createStream(Object.assign(defaults, options.logstashConfig));
-      logConfig.streams.push({
-        type: 'raw',
-        stream: tcpStream
-      });
-    }
-
-    this.appLogger = bunyan.createLogger(logConfig);
-
-    if (tcpStream) {
-      tcpStream.on('error', (err) => this.appLogger.error('logstash-tcp stream error', err));
-      tcpStream.on('timeout', () => this.appLogger.error('logstash-tcp timeout'));
-      tcpStream.on('connect', () => this.appLogger.info('logstash-tcp connect'));
-      tcpStream.on('close', () => this.appLogger.error('logstash-tcp close'));
-    }
-    this.appLogger.info('logging ready');
-  }
-
-  /**
    * @name log
    * @summary logs a message
    * @private
@@ -303,8 +247,6 @@ class HydraExpress {
   * @private
   */
   start(resolve, reject) {
-    this.loggerInit();
-
     if (!this.config.cluster || this.config.cluster !== true) {
       hydra.init(this.config.hydra)
         .then(() => {
@@ -424,27 +366,6 @@ class HydraExpress {
 
     this.config.appPath = path.join('./', 'public');
     app.use('/', express.static(this.config.appPath));
-
-    /**
-    * Request logger.
-    */
-    if (this.config.environment === 'development' && this.config.logRequestHeader) {
-      app.use((req, res, next) => {
-        this.appLogger.info({
-          request_info: {
-            url: req.url,
-            originalUrl: req.originalUrl,
-            fullUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-            method: req.method,
-            body: (req.method === 'post' || req.method === 'POST') ? req.body : {},
-            xForwardedFor: req.headers['x-forwarded-for'],
-            host: req.headers['host'],
-            userAgent: req.headers['user-agent']
-          }
-        });
-        next();
-      });
-    }
 
     app.set('port', this.config.servicePort);
 
