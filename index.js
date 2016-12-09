@@ -140,10 +140,7 @@ class HydraExpress {
         * @param {string} entry - log entry
         */
         hydra.on('log', (entry) => {
-          let msg = Utils.safeJSONParse(entry);
-          if (msg) {
-            this.log(msg.type, msg.message);
-          }
+          this.log(entry.type, entry.message);
         });
 
         if (config.jwtPublicCert) {
