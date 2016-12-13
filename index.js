@@ -7,6 +7,13 @@
 'use strict';
 
 const Promise = require('bluebird');
+Promise.series = (iterable, action) => {
+  return Promise.mapSeries(
+    iterable.map(action),
+    (value, index, length) => value
+  );
+};
+
 const ServerResponse = require('fwsp-server-response');
 let serverResponse = new ServerResponse();
 
@@ -19,7 +26,6 @@ const http = require('http');
 const moment = require('moment');
 const os = require('os');
 const path = require('path');
-const PrettyStream = require('bunyan-prettystream');
 const responseTime = require('response-time');
 const Utils = require('fwsp-jsutils');
 const jwtAuth = require('fwsp-jwt-auth');
@@ -54,6 +60,27 @@ class HydraExpress {
     this.config = null;
     this.server = null;
     this.appLogger = defaultLogger();
+    this.registeredPlugins = [];
+  }
+
+  /**
+   * @name use
+   * @summary Adds plugins to Hydra
+   * @param {...object} plugins - plugins to register
+   * @return {object} - Promise which will resolve when all plugins are registered
+   */
+  use(...plugins) {
+    return Promise.series(plugins, plugin => this._registerPlugin(plugin));
+  }
+
+  /**
+   * @name _registerPlugin
+   * @summary Registers a plugin with Hydra
+   * @param {object} plugin - HydraPlugin to use
+   */
+  _registerPlugin(plugin) {
+    plugin.setHydraExpress(this);
+    this.registeredPlugins.push(plugin);
   }
 
   /**
@@ -132,7 +159,6 @@ class HydraExpress {
         this.config = config;
         this.config.environment = this.config.environment || 'development';
         this.registerRoutesCallback = config.registerRoutesCallback;
-
         /**
         * Start the log event Listener as soon as possible in order to
         * receive redis initialization errors.
@@ -142,18 +168,20 @@ class HydraExpress {
         hydra.on('log', (entry) => {
           this.log(entry.type, entry.message);
         });
-
-        if (config.jwtPublicCert) {
-          jwtAuth.loadCerts(null, config.jwtPublicCert)
-            .then(() => {
+        Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config))
+          .then((...results) => {
+            if (config.jwtPublicCert) {
+              jwtAuth.loadCerts(null, config.jwtPublicCert)
+                .then(() => {
+                  this.start(resolve, reject);
+                })
+                .catch((err) => {
+                  reject(new Error('Can\'t load public cert'));
+                });
+            } else {
               this.start(resolve, reject);
-            })
-            .catch((err) => {
-              reject(new Error('Can\'t load public cert'));
-            });
-        } else {
-          this.start(resolve, reject);
-        }
+            }
+          });
       }
     });
   }
@@ -253,9 +281,13 @@ class HydraExpress {
           this.log('start', `${this.config.hydra.serviceName} (v.${this.config.version}) server listening on port ${this.config.hydra.servicePort}`);
           this.log('info', `Using environment: ${this.config.environment}`);
           this.initWorker();
-          setTimeout(() => {
-            resolve(serviceInfo);
-          }, 2000);
+          Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady())
+            .then((...results) => {
+              console.log('Plugins ready');
+              console.dir(results, {colors: true, depth: null});
+              return Promise.delay(2000);
+            })
+            .then(() => resolve(serviceInfo));
         })
         .catch((err) => {
           console.log('err', err);
