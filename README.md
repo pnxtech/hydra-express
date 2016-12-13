@@ -16,9 +16,10 @@ Read the [Full documentation](documentation.md)
 
 ### Related projects
 
-* Hydra: hydra core project for use with Non-ExpressJS apps
-* Hydra-cli: a hydra commandline client for interacting with Hydra-enabled applications
-* Hydra Geneartor: A [Yeoman generator](https://github.com/flywheelsports/generator-fwsp-hydra) for quickly building hydra-based projects
-* Hydra-Router: A service-aware socket and HTTP API router
-* UMF - Universal Message Format, a messaging specification for routable messages
-* Hydra-Cluter: A compute cluster based on Hydra
+* [Hydra](https://github.com/flywheelsports/fwsp-hydra): hydra core project for use with Non-ExpressJS apps
+* [Hydra-cli](https://github.com/flywheelsports/hydra-cli): a hydra commandline client for interacting with Hydra-enabled applications
+* [Hydra Geneartor](https://github.com/flywheelsports/generator-fwsp-hydra): A Yeoman generator for quickly building hydra-based projects
+* [Hydra-Router](https://github.com/flywheelsports/fwsp-hydra-router): A service-aware socket and HTTP API router
+* [UMF](https://github.com/cjus/umf): Universal Message Format, a messaging specification for routable messages
+* [Hydra-Cluster](https://github.com/cjus/hydra-cluster): A compute cluster based on Hydra
+* [Other Flywheel Sports open source projects](https://github.com/flywheelsports)
