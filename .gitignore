@@ -1,5 +1,6 @@
 .DS_Store
 *.log
+.idea/*
 scratch.*
 node_modules/
 ./properties.js
