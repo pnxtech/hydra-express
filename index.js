@@ -10,7 +10,7 @@ const Promise = require('bluebird');
 Promise.series = (iterable, action) => {
   return Promise.mapSeries(
     iterable.map(action),
-    (value, index, length) => value
+    (value, index, length) => value || iterable[index].name || null
   );
 };
 
@@ -181,6 +181,9 @@ class HydraExpress {
             } else {
               this.start(resolve, reject);
             }
+          })
+          .catch(err => {
+            this.log('error', err.toString());
           });
       }
     });
@@ -283,9 +286,10 @@ class HydraExpress {
           this.initWorker();
           Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady())
             .then((...results) => {
-              console.log('Plugins ready');
-              console.dir(results, {colors: true, depth: null});
               return Promise.delay(2000);
+            })
+            .catch(err => {
+              this.log('error', err.toString());
             })
             .then(() => resolve(serviceInfo));
         })
