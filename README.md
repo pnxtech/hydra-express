@@ -1,5 +1,5 @@
 ![logo](hydra-express.png)
-
+[![npm version](https://badge.fury.io/js/fwsp-hydra-express.svg)](https://badge.fury.io/js/fwsp-hydra-express)
 [![Join the chat at https://gitter.im/flywheelsports/fwsp-hydra-express](https://badges.gitter.im/flywheelsports/fwsp-hydra-express.svg)](https://gitter.im/flywheelsports/fwsp-hydra-express?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Hydra-Express is a light-weight library for building NodeJS and ExpressJS based distributed computing applications. It was announced at [EmpireNode 2016](http://empirenode.org/).
