@@ -5,6 +5,23 @@
   "author": {
     "name": "Carlos Justiniano"
   },
+  "contributors": [
+    {
+      "name": "Carlos Justiniano",
+      "github": "cjus",
+      "email": "carlos.justiniano@gmail.com"
+    },
+    {
+      "name": "Eric Adum",
+      "github": "emadum",
+      "email": "eric.adum@gmail.com"
+    },
+    {
+      "name": "Artem Kochnev",
+      "github": "artemkochnev",
+      "email": "artemkochnev@gmail.com"
+    }
+  ],    
   "scripts": {
     "test": "mocha specs --reporter spec"
   },
