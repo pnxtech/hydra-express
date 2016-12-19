@@ -4,6 +4,24 @@ A module which wraps Hydra and ExpressJS to provide an out of the box microservi
 
 For more information on Hydra see: [Hydra](https://github.com/flywheelsports/fwsp-hydra)
 
+* [Installation](#installation)
+* [Usage](#usage)
+* [Logging and error reporting](#logging-and-error-reporting)
+* [Serving static web content](#serving-static-web-content)
+* [Built-in routes](#built-in-routes)
+* [Demo](#demo)
+* [HydraExpress members](#hydraexpress-members)
+  * [init](#init)
+  * [shutdown](#shutdown)
+  * [getExpress](#getexpress)
+  * [getHydra](#gethydra)
+  * [log](#log)
+  * [sendResponse](#sendresponse)
+  * [validateJwtToken](#validatejwttoken)
+* [Hydra / Express configuration](#hydra--express-configuration)
+* [Tests](#tests)
+* [Hydra Express Plugins](#hydra-express-plugins)
+
 ## Installation
 
 To install and use in another project:
@@ -234,7 +252,7 @@ hydra.serviceDescription | A description for the service. Used by monitoring sof
 hydra.serviceIP | The IP address to use with the service. If the value is equal to an empty string (''), then the machine's local IP will be used, otherwise a four segment IP address is expected (52.9.201.160).
 hydra.servicePort | The port address the service should use. If set to zero then a random port will be selected.
 hydra.serviceType | The service class. For example: "social" for all services relating to social.
-hydra.redis | The settings for the Redis server which hydra should use.  
+hydra.redis | The settings for the Redis server which hydra should use.
 
 ## Tests
 
@@ -253,3 +271,11 @@ To run the tests suite:
 ```shell
 $ npm run test
 ```
+
+## Hydra Express Plugins
+
+`HydraExpressPlugin` extends `HydraPlugin`. See the [Hydra plugin documention](https://github.com/flywheelsports/fwsp-hydra/blob/master/plugins.md) for more details.
+
+The major difference is that for `HydraExpressPlugin`, `setHydraExpress(hydraExpress)` is called instead of `setHydra(hydra)`; `setHydraExpress` calls `setHydra(hydraExpress.getHydra())` internally, so make sure to call super.setHydraExpress if you're extending `HydraExpressPlugin`, or otherwise ensure that `HydraPlugin.setHydra` is called.
+
+See the [HydraExpressLogger plugin](https://github.com/flywheelsports/fwsp-logger/blob/master/lib/HydraExpressLogger.js) for an example of a plugin that registers Express middleware (look at `onServiceReady`).
