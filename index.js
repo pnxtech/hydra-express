@@ -169,23 +169,15 @@ class HydraExpress {
         hydra.on('log', (entry) => {
           this.log(entry.type, entry.message);
         });
-        Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config))
+        return Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config))
           .then((...results) => {
             if (config.jwtPublicCert) {
-              jwtAuth.loadCerts(null, config.jwtPublicCert)
-                .then(() => {
-                  this.start(resolve, reject);
-                })
-                .catch((err) => {
-                  reject(new Error('Can\'t load public cert'));
-                });
-            } else {
-              this.start(resolve, reject);
+              return jwtAuth.loadCerts(null, config.jwtPublicCert)
+                .catch(err => reject(new Error('Can\'t load public cert')));
             }
           })
-          .catch(err => {
-            this.log('error', err.toString());
-          });
+          .then(() => this.start(resolve, reject))
+          .catch(err => this.log('error', err.toString()));
       }
     });
   }
@@ -277,27 +269,23 @@ class HydraExpress {
   */
   start(resolve, reject) {
     if (!this.config.cluster || this.config.cluster !== true) {
+      let serviceInfo;
       hydra.init(this.config.hydra)
         .then(() => {
           return hydra.registerService();
         })
-        .then((serviceInfo) => {
+        .then(_serviceInfo => {
+          serviceInfo = _serviceInfo;
           this.log('start', `${this.config.hydra.serviceName} (v.${this.config.version}) server listening on port ${this.config.hydra.servicePort}`);
           this.log('info', `Using environment: ${this.config.environment}`);
           this.initWorker();
-          Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady())
-            .then((...results) => {
-              return Promise.delay(2000);
-            })
-            .catch(err => {
-              this.log('error', err.toString());
-            })
-            .then(() => resolve(serviceInfo));
+          return Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady());
         })
-        .catch((err) => {
-          console.log('err', err);
-          reject(err);
-        });
+        .then((...results) => {
+          return Promise.delay(2000);
+        })
+        .then(() => resolve(serviceInfo))
+        .catch(err => this.log('error', err.toString()));
     } else {
       if (cluster.isMaster) {
         const numWorkers = this.config.processes || os.cpus().length;
@@ -336,13 +324,13 @@ class HydraExpress {
           })
           .then((serviceInfo) => {
             this.initWorker();
-            setTimeout(() => {
+            Promise.delay(2000).then(() => {
               resolve({
                 serviceName: this.config.hydra.serviceName,
                 serviceIP: this.config.hydra.serviceIP,
                 servicePort: this.config.hydra.servicePort
               });
-            }, 2000);
+            });
           });
       }
     }
