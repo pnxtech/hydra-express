@@ -172,9 +172,10 @@ class HydraExpress {
         Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config))
           .then((...results) => {
             if (config.jwtPublicCert) {
-              jwtAuth.loadCerts(null, config.jwtPublicCert)
+              return jwtAuth.loadCerts(null, config.jwtPublicCert)
                 .then(() => {
                   this.start(resolve, reject);
+                  return 0;
                 })
                 .catch((err) => {
                   reject(new Error('Can\'t load public cert'));
@@ -293,6 +294,7 @@ class HydraExpress {
               this.log('error', err.toString());
             })
             .then(() => resolve(serviceInfo));
+          return 0;
         })
         .catch((err) => {
           console.log('err', err);
