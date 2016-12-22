@@ -7,6 +7,13 @@
 'use strict';
 
 const Promise = require('bluebird');
+Promise.config({
+  // Enables all warnings except forgotten return statements.
+  warnings: {
+    wForgottenReturn: false
+  }
+});
+
 Promise.series = (iterable, action) => {
   return Promise.mapSeries(
     iterable.map(action),
