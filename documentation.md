@@ -50,7 +50,15 @@ function registerRoutesCallback() {
   hydraExpress.registerRoutes('/v1/offers', require('./offers-v1-api'));
 }
 
-hydraExpress.init(config, version, registerRoutesCallback)
+function registerMiddlewareCallback() {
+  let app = hydraExpress.getExpressApp();
+  app.use((req, res, next) => {
+    console.log('req.headers', req.headers);
+    next();
+  });
+}
+
+hydraExpress.init(config, version, registerRoutesCallback, registerMiddlewareCallback)
   .then((serviceInfo) => {
     console.log('serviceInfo', serviceInfo);
   })
@@ -136,9 +144,10 @@ Initializes the HydraExpress module
 * @param {object} config - application configuration object
 * @param {string} version - version of application
 * @param {function} registerRoutesCallback - callback function to register routes
+* @param {function} registerMiddlewareCallback - callback function to register middleware
 * @return {object} Promise - promise resolving to hydraexpress ready or failure
 */
-init(config, version, registerRoutesCallback)
+init(config, version, registerRoutesCallback, registerMiddlewareCallback)
 ```
 
 #### shutdown
