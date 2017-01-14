@@ -106,7 +106,8 @@ class HydraExpress {
         'serviceDescription': ''
       },
       'version': '',
-      'registerRoutesCallback': ''
+      'registerRoutesCallback': '',
+      'registerMiddlewareCallback': ''
     };
 
     Object.keys(requiredMembers).forEach((key) => {
@@ -162,11 +163,14 @@ class HydraExpress {
         reject(new Error('Config missing version parameter'));
       } else if (!config.registerRoutesCallback) {
         reject(new Error('Config missing registerRoutesCallback parameter'));
+      } else if (!config.registerMiddlewareCallback) {
+        reject(new Error('Config missing registerMiddlewareCallback parameter'));
       } else {
         config.hydra.serviceVersion = config.version;
         this.config = config;
         this.config.environment = this.config.environment || 'development';
         this.registerRoutesCallback = config.registerRoutesCallback;
+        this.registerMiddlewareCallback = config.registerMiddlewareCallback;
         /**
         * Start the log event Listener as soon as possible in order to
         * receive redis initialization errors.
@@ -393,6 +397,8 @@ class HydraExpress {
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(bodyParser.json());
 
+    this.registerMiddlewareCallback && this.registerMiddlewareCallback();
+
     this.config.appPath = path.join('./', 'public');
     app.use('/', express.static(this.config.appPath));
 
@@ -598,18 +604,23 @@ class IHydraExpress extends HydraExpress {
   * @param {object} config - application configuration object
   * @param {string} version - version of application
   * @param {function} registerRoutesCallback - callback function to register routes
+  * @param {function} registerMiddlewareCallback - callback function to register middleware
   * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
-  init(config, version, registerRoutesCallback) {
+  init(config, version, registerRoutesCallback, registerMiddlewareCallback) {
     let inner = {};
     if (typeof version === 'function') {
       registerRoutesCallback = version;
+      registerMiddlewareCallback = registerRoutesCallback;
       inner.version = config.version || require('./package.json').version;
     } else if (version) {
       inner.version = version;
     }
     if (registerRoutesCallback) {
       inner.registerRoutesCallback = registerRoutesCallback;
+    }
+    if (registerMiddlewareCallback) {
+      inner.registerMiddlewareCallback = registerMiddlewareCallback;
     }
     return super.init(Object.assign({}, config, inner));
   }
