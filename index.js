@@ -106,8 +106,7 @@ class HydraExpress {
         'serviceDescription': ''
       },
       'version': '',
-      'registerRoutesCallback': '',
-      'registerMiddlewareCallback': ''
+      'registerRoutesCallback': ''
     };
 
     Object.keys(requiredMembers).forEach((key) => {
