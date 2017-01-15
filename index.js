@@ -162,8 +162,6 @@ class HydraExpress {
         reject(new Error('Config missing version parameter'));
       } else if (!config.registerRoutesCallback) {
         reject(new Error('Config missing registerRoutesCallback parameter'));
-      } else if (!config.registerMiddlewareCallback) {
-        reject(new Error('Config missing registerMiddlewareCallback parameter'));
       } else {
         config.hydra.serviceVersion = config.version;
         this.config = config;
