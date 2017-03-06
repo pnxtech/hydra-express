@@ -1,6 +1,6 @@
 {
   "name": "fwsp-hydra-express",
-  "version": "0.14.7",
+  "version": "0.14.8",
   "description": "A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.",
   "author": {
     "name": "Carlos Justiniano"
@@ -38,22 +38,22 @@
   },
   "homepage": "https://github.com/flywheelsports/fwsp-hydra-express#readme",
   "dependencies": {
-    "bluebird": "3.4.7",
-    "body-parser": "1.15.2",
+    "bluebird": "3.5.0",
+    "body-parser": "1.17.1",
     "cors": "2.8.1",
-    "express": "4.14.0",
-    "fwsp-hydra": "0.14.5",
-    "fwsp-jsutils": "1.0.8",
+    "express": "4.15.2",
+    "fwsp-hydra": "0.14.7",
+    "fwsp-jsutils": "1.0.9",
     "fwsp-jwt-auth": "0.0.8",
     "fwsp-server-response": "2.2.3",
-    "helmet": "2.3.0",
+    "helmet": "3.4.1",
     "moment": "2.17.1",
     "response-time": "2.3.2"
   },
   "devDependencies": {
     "chai": "3.5.0",
-    "eslint": "3.12.2",
+    "eslint": "3.17.1",
     "mocha": "3.2.0",
-    "superagent": "3.3.1"
+    "superagent": "3.5.0"
   }
 }
