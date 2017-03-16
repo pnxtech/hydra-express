@@ -279,7 +279,8 @@ class HydraExpress {
     if (!this.config.cluster || this.config.cluster !== true) {
       let serviceInfo;
       hydra.init(this.config.hydra)
-        .then(() => {
+        .then((config) => {
+          this.config = config;
           return hydra.registerService();
         })
         .then(_serviceInfo => {
