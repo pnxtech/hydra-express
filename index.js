@@ -1,4 +1,3 @@
-/*eslint-disable no-unused-vars */
 /**
 * HydraExpress Module
 * @description A module that binds Hydra and ExpressJS. This simplifies building API enabled microservices.
@@ -17,7 +16,7 @@ Promise.config({
 Promise.series = (iterable, action) => {
   return Promise.mapSeries(
     iterable.map(action),
-    (value, index, length) => value || iterable[index].name || null
+    (value, index, _length) => value || iterable[index].name || null
   );
 };
 
@@ -51,10 +50,10 @@ let defaultLogger = () => {
     console.dir(obj, {colors: true, depth: null});
   };
   return {
-    fatal: obj => dump('FATAL', obj),
-    error: obj => dump('ERROR', obj),
-    debug: obj => dump('DEBUG', obj),
-    info: obj => dump('INFO', obj)
+    fatal: (obj) => dump('FATAL', obj),
+    error: (obj) => dump('ERROR', obj),
+    debug: (obj) => dump('DEBUG', obj),
+    info: (obj) => dump('INFO', obj)
   };
 };
 
@@ -63,6 +62,10 @@ let defaultLogger = () => {
 * @summary HydraExpress class
 */
 class HydraExpress {
+  /**
+  * @name constructor
+  * @return {undefined}
+  */
   constructor() {
     this.config = null;
     this.server = null;
@@ -77,7 +80,7 @@ class HydraExpress {
    * @return {object} - Promise which will resolve when all plugins are registered
    */
   use(...plugins) {
-    return Promise.series(plugins, plugin => this._registerPlugin(plugin));
+    return Promise.series(plugins, (plugin) => this._registerPlugin(plugin));
   }
 
   /**
@@ -177,15 +180,15 @@ class HydraExpress {
         hydra.on('log', (entry) => {
           this.log(entry.type, entry.message);
         });
-        return Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config))
-          .then((...results) => {
+        return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config))
+          .then((..._results) => {
             if (config.jwtPublicCert) {
               return jwtAuth.loadCerts(null, config.jwtPublicCert)
-                .catch(err => reject(new Error('Can\'t load public cert')));
+                .catch((_err) => reject(new Error('Can\'t load public cert')));
             }
           })
           .then(() => this.start(resolve, reject))
-          .catch(err => this.log('error', err.toString()));
+          .catch((err) => this.log('error', err.toString()));
       }
     });
   }
@@ -193,6 +196,7 @@ class HydraExpress {
   /**
   * @name _shutdown
   * @summary Shutdown hydra-express safely.
+  * @return {undefined}
   */
   _shutdown() {
     this.server.close(() => {
@@ -235,6 +239,7 @@ class HydraExpress {
    * @private
    * @param {string} type - type of message: 'info', 'start', 'error'
    * @param {string} message - message to log
+  * @return {undefined}
    */
   log(type, message) {
     let suppressLogEmit = true;
@@ -272,10 +277,11 @@ class HydraExpress {
   * @name start
   * @summary Starts the HydraExpress server
   * @param {function} resolve - promise resolve
-  * @param {function} reject - promise reject
+  * @param {function} _reject - promise reject
   * @private
+  * @return {undefined}
   */
-  start(resolve, reject) {
+  start(resolve, _reject) {
     if (!this.config.cluster || this.config.cluster !== true) {
       let serviceInfo;
       hydra.init(this.config)
@@ -283,18 +289,18 @@ class HydraExpress {
           this.config = config;
           return hydra.registerService();
         })
-        .then(_serviceInfo => {
+        .then((_serviceInfo) => {
           serviceInfo = _serviceInfo;
           this.log('start', `${this.config.hydra.serviceName} (v.${this.config.version}) server listening on port ${this.config.hydra.servicePort}`);
           this.log('info', `Using environment: ${this.config.environment}`);
           this.initWorker();
-          return Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady());
+          return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
         })
-        .then((...results) => {
+        .then((..._results) => {
           return Promise.delay(2000);
         })
         .then(() => resolve(serviceInfo))
-        .catch(err => this.log('error', err.toString()));
+        .catch((err) => this.log('error', err.toString()));
     } else {
       if (cluster.isMaster) {
         const numWorkers = this.config.processes || os.cpus().length;
@@ -331,7 +337,7 @@ class HydraExpress {
           .then(() => {
             return hydra.registerService();
           })
-          .then((serviceInfo) => {
+          .then((_serviceInfo) => {
             this.initWorker();
             Promise.delay(2000).then(() => {
               resolve({
@@ -349,6 +355,7 @@ class HydraExpress {
    * @name initWorker
    * @summary Initialize a worker process
    * @private
+   * @return {undefined}
    */
   initWorker() {
     app.use(cors());
@@ -480,9 +487,9 @@ class HydraExpress {
       * @param {object} err - express err object
       * @param {object} req - express request object
       * @param {object} res - express response object
-      * @param {function} next - express next handler
+      * @param {function} _next - express next handler
       */
-      app.use((err, req, res, next) => {
+      app.use((err, req, res, _next) => {
         let errCode = err.status || HTTP_SERVER_ERROR;
         if (err.status !== HTTP_NOT_FOUND) {
           this.appLogger.fatal({
@@ -503,6 +510,7 @@ class HydraExpress {
   * @summary Register API routes.
   * @private
   * @param {object} routes - object with key/value pairs of routeBase: express api object
+  * @return {undefined}
   */
   _registerRoutes(routes) {
     let routesList = [];
@@ -531,6 +539,7 @@ class HydraExpress {
    * @param {number} httpCode - HTTP response code
    * @param {object} res - Node HTTP response object
    * @param {object} data - An object to send
+   * @return {undefined}
    */
   _sendResponse(httpCode, res, data) {
     serverResponse.sendResponse(httpCode, res, data);
@@ -554,7 +563,7 @@ class HydraExpress {
         let token = authHeader.split(' ')[1];
         if (token) {
           return jwtAuth.verifyToken(token)
-            .then(decoded => {
+            .then((decoded) => {
               req.authToken = decoded;
               next();
             })
@@ -592,6 +601,10 @@ class HydraExpress {
 * @summary Interface to a HydraExpress class
 */
 class IHydraExpress extends HydraExpress {
+  /**
+  * @name constructor
+  * @return {undefined}
+  */
   constructor() {
     super();
   }
@@ -626,6 +639,7 @@ class IHydraExpress extends HydraExpress {
   /**
   * @name shutdown
   * @summary Shutdown hydra-express safely.
+  * @return {undefined}
   */
   shutdown() {
     super._shutdown();
@@ -654,6 +668,7 @@ class IHydraExpress extends HydraExpress {
   * @summary Logger. Use to log messages
   * @param {string} type - type of message: 'fatal', 'error', 'debug', 'info'
   * @param {string} str - string message to log
+  * @return {undefined}
   */
   log(type, str) {
     super.log(type, str);
@@ -664,6 +679,7 @@ class IHydraExpress extends HydraExpress {
   * @summary Register API routes.
   * @param {string} routeBaseUrl - route base url, ex: /v1/offers
   * @param {object} api - express api object
+  * @return {undefined}
   */
   registerRoutes(routeBaseUrl, api) {
     super._registerRoutes(routeBaseUrl, api);
@@ -675,6 +691,7 @@ class IHydraExpress extends HydraExpress {
    * @param {number} httpCode - HTTP response code
    * @param {object} res - Node HTTP response object
    * @param {object} data - An object to send
+   * @return {undefined}
    */
   sendResponse(httpCode, res, data) {
     super._sendResponse(httpCode, res, data);
