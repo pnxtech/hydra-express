@@ -14,6 +14,8 @@ There's a Hydra-express tutorial on the [RisingStack community site](https://com
 
 Read the [Full documentation](documentation.md)
 
+Interested in running Hydra-express on AWS using Docker containers and Swarm mode? See: https://github.com/cjus/hydra-and-aws-in-docker-swarm
+
 ### Related projects
 
 * [Hydra](https://github.com/flywheelsports/fwsp-hydra): hydra core project for use with Non-ExpressJS apps
