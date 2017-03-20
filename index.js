@@ -234,6 +234,15 @@ class HydraExpress {
   }
 
   /**
+  * @name getJwtAuth
+  * @summary Retrieve the underlying jwtAuth object
+  * @return {object} jwtAuth - jwtAuth object
+  */
+  getJwtAuth() {
+    return jwtAuth;
+  }
+
+  /**
    * @name log
    * @summary logs a message
    * @private
@@ -661,6 +670,15 @@ class IHydraExpress extends HydraExpress {
   */
   getHydra() {
     return super.getHydra();
+  }
+
+  /**
+  * @name getJwtAuth
+  * @summary Retrieve the underlying jwtAuth object
+  * @return {object} jwtAuth - jwtAuth object
+  */
+  getJwtAuth() {
+    return super.getJwtAuth();
   }
 
   /**
