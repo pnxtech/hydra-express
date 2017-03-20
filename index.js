@@ -243,6 +243,15 @@ class HydraExpress {
   }
 
   /**
+  * @name getRuntimeConfig
+  * @summary Retrieve loaded configuration object
+  * @return {object} config - immutable object
+  */
+  getRuntimeConfig() {
+    return Object.assign({}, this.config);
+  }
+
+  /**
    * @name log
    * @summary logs a message
    * @private
@@ -343,7 +352,8 @@ class HydraExpress {
         resolve({});
       } else {
         hydra.init(this.config)
-          .then(() => {
+          .then((config) => {
+            this.config = config;
             return hydra.registerService();
           })
           .then((_serviceInfo) => {
@@ -679,6 +689,15 @@ class IHydraExpress extends HydraExpress {
   */
   getJwtAuth() {
     return super.getJwtAuth();
+  }
+
+  /**
+  * @name getRuntimeConfig
+  * @summary Retrieve loaded configuration object
+  * @return {object} config - immutable object
+  */
+  getRuntimeConfig() {
+    return super.getRuntimeConfig();
   }
 
   /**
