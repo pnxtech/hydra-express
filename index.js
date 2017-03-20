@@ -69,7 +69,6 @@ class HydraExpress {
   constructor() {
     this.config = null;
     this.server = null;
-    this.jwtAuth = jwtAuth;
     this.appLogger = defaultLogger();
     this.registeredPlugins = [];
   }
@@ -232,6 +231,15 @@ class HydraExpress {
   */
   getHydra() {
     return hydra;
+  }
+
+  /**
+  * @name getJwtAuth
+  * @summary Retrieve the underlying jwtAuth object
+  * @return {object} jwtAuth - jwtAuth object
+  */
+  getJwtAuth() {
+    return jwtAuth;
   }
 
   /**
@@ -662,6 +670,15 @@ class IHydraExpress extends HydraExpress {
   */
   getHydra() {
     return super.getHydra();
+  }
+
+  /**
+  * @name getJwtAuth
+  * @summary Retrieve the underlying jwtAuth object
+  * @return {object} jwtAuth - jwtAuth object
+  */
+  getJwtAuth() {
+    return super.getJwtAuth();
   }
 
   /**
