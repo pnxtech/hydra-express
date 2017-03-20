@@ -1,6 +1,6 @@
 {
   "name": "fwsp-hydra-express",
-  "version": "0.15.15",
+  "version": "0.15.16",
   "description": "A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.",
   "author": {
     "name": "Carlos Justiniano"

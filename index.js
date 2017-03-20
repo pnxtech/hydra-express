@@ -546,6 +546,15 @@ class HydraExpress {
   }
 
   /**
+  * @name _decodeJwtToken
+  * @summary Helper function for decoding JWT token
+  * @return {function} Promise that resolves with decoded JWT token
+  */
+  _decodeJwtToken(token) {
+    return jwtAuth.verifyToken(token);
+  }
+
+  /**
   * @name _validateJwtToken
   * @summary Express middleware to validate a JWT sent via the req.authorization header
   * @return {function} Middleware function
@@ -562,7 +571,7 @@ class HydraExpress {
       } else {
         let token = authHeader.split(' ')[1];
         if (token) {
-          return jwtAuth.verifyToken(token)
+          return this._decodeJwtToken(token)
             .then((decoded) => {
               req.authToken = decoded;
               next();
@@ -695,6 +704,15 @@ class IHydraExpress extends HydraExpress {
    */
   sendResponse(httpCode, res, data) {
     super._sendResponse(httpCode, res, data);
+  }
+
+  /**
+  * @name decodeJwtToken
+  * @summary Helper function for decoding JWT token
+  * @return {function} Promise that resolves with decoded JWT token
+  */
+  decodeJwtToken(token) {
+    return super._decodeJwtToken(token);
   }
 
   /**
