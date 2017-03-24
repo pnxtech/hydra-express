@@ -18,10 +18,10 @@ Interested in running Hydra-express on AWS using Docker containers and Swarm mod
 
 ### Related projects
 
-* [Hydra](https://github.com/flywheelsports/fwsp-hydra): hydra core project for use with Non-ExpressJS apps
+* [Hydra](https://github.com/flywheelsports/hydra): hydra core project for use with Non-ExpressJS apps
 * [Hydra-cli](https://github.com/flywheelsports/hydra-cli): a hydra commandline client for interacting with Hydra-enabled applications
-* [Hydra Geneartor](https://github.com/flywheelsports/generator-fwsp-hydra): A Yeoman generator for quickly building hydra-based projects
-* [Hydra-Router](https://github.com/flywheelsports/fwsp-hydra-router): A service-aware socket and HTTP API router
+* [Hydra Generator](https://github.com/flywheelsports/generator-fwsp-hydra): A Yeoman generator for quickly building hydra-based projects
+* [Hydra-Router](https://github.com/flywheelsports/-hydra-router): A service-aware socket and HTTP API router
 * [UMF](https://github.com/cjus/umf): Universal Message Format, a messaging specification for routable messages
 * [Hydra-Cluster](https://github.com/cjus/hydra-cluster): A compute cluster based on Hydra
 * [Other Flywheel Sports open source projects](https://github.com/flywheelsports)
