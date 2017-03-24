@@ -4,7 +4,7 @@
 
 Hydra-Express is a light-weight library for building NodeJS and ExpressJS based distributed computing applications. It was announced at [EmpireNode 2016](http://empirenode.org/).
 
-Hydra offers features such as service discovery, distributed messaging, message load balancing, logging, presence, and health monitoring. It was announced at [EmpireNode 2016](http://empirenode.org/).
+Hydra offers features such as service discovery, distributed messaging, message load balancing, logging, presence, and health monitoring. 
 
 > Hydra-Express replies on an instance of Redis, if you need to learn more about Redis, see our [Redis quick start guide](https://youtu.be/eX7EamF_WuA).
 
