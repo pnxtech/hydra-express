@@ -4,9 +4,7 @@
 
 Hydra-Express is a light-weight library for building NodeJS and ExpressJS based distributed computing applications. It was announced at [EmpireNode 2016](http://empirenode.org/).
 
-A key goal in Hydra-Express is to simplify building Node-based distributed applications.
-
-There's a Hydra-express tutorial on the [RisingStack community site](https://community.risingstack.com/tutorial-building-expressjs-based-microservices-using-hydra/). Rather watch a video than read the docs? See our [Introduction to Hydra](https://www.youtube.com/watch?v=dHFQxrc4Fnk) video on YouTube.
+Hydra offers features such as service discovery, distributed messaging, message load balancing, logging, presence, and health monitoring. It was announced at [EmpireNode 2016](http://empirenode.org/).
 
 > Hydra-Express replies on an instance of Redis, if you need to learn more about Redis, see our [Redis quick start guide](https://youtu.be/eX7EamF_WuA).
 
@@ -18,10 +16,23 @@ Interested in running Hydra-express on AWS using Docker containers and Swarm mod
 
 ### Related projects
 
-* [Hydra](https://github.com/flywheelsports/fwsp-hydra): hydra core project for use with Non-ExpressJS apps
+There are many projects on NPM which contain the name `hydra`. The following are official projects related to the Hydra - microservice library.
+
+* [Hydra](https://github.com/flywheelsports/hydra): hydra core project for use with Non-ExpressJS apps
+* [Hydra-Express](https://github.com/flywheelsports/hydra-express): hydra for ExpressJS developers
 * [Hydra-cli](https://github.com/flywheelsports/hydra-cli): a hydra commandline client for interacting with Hydra-enabled applications
-* [Hydra Geneartor](https://github.com/flywheelsports/generator-fwsp-hydra): A Yeoman generator for quickly building hydra-based projects
-* [Hydra-Router](https://github.com/flywheelsports/fwsp-hydra-router): A service-aware socket and HTTP API router
+* [Hydra Generator](https://github.com/flywheelsports/generator-fwsp-hydra): A Yeoman generator for quickly building hydra-based projects
+* [Hydra-Router](https://github.com/flywheelsports/-hydra-router): A service-aware socket and HTTP API router
 * [UMF](https://github.com/cjus/umf): Universal Message Format, a messaging specification for routable messages
 * [Hydra-Cluster](https://github.com/cjus/hydra-cluster): A compute cluster based on Hydra
-* [Other Flywheel Sports open source projects](https://github.com/flywheelsports)
+
+### Articles
+
+* [What is Hydra?](https://medium.com/@cjus/what-is-hydra-226db88fc075#.c9jm9l3ql)
+* [Using Hydra’s CLI](https://medium.com/@cjus/using-hydras-cli-f66f56fe355d#.57ep34fv2)
+* [Hydra, AWS, and Docker: a microservices deployment story](https://medium.com/@cjus/hydra-aws-and-docker-a-microservices-deployment-story-ce7c3f4abad9#.rqw11heff)
+
+On RisingStack:
+
+* [Tutorial: Building ExpressJS-based microservices using Hydra](https://community.risingstack.com/tutorial-building-expressjs-based-microservices-using-hydra/)
+* [Building a Microservices Example Game with Distributed Messaging](https://community.risingstack.com/building-a-microservices-example-game-with-distributed-messaging/)
