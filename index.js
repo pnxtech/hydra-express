@@ -35,7 +35,7 @@ const path = require('path');
 const responseTime = require('response-time');
 const Utils = require('fwsp-jsutils');
 const jwtAuth = require('fwsp-jwt-auth');
-const hydra = require('fwsp-hydra');
+const hydra = require('hydra');
 
 const HTTP_OK = 200;
 const HTTP_UNAUTHORIZED = 401;

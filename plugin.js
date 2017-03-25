@@ -1,6 +1,6 @@
 'use strict';
 
-const HydraPlugin = require('fwsp-hydra/plugin');
+const HydraPlugin = require('hydra/plugin');
 
 /**
  * @name HydraExpressPlugin

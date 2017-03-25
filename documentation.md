@@ -2,7 +2,7 @@
 
 A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.
 
-For more information on Hydra see: [Hydra](https://github.com/flywheelsports/fwsp-hydra)
+For more information on Hydra see: [Hydra](https://github.com/flywheelsports/hydra)
 
 * [Installation](#installation)
 * [Usage](#usage)
@@ -27,7 +27,7 @@ For more information on Hydra see: [Hydra](https://github.com/flywheelsports/fws
 To install and use in another project:
 
 ```shell
-$ npm install fwsp-hydra-express
+$ npm install hydra-express
 ```
 
 To contribute and develop locally:
@@ -44,7 +44,7 @@ $ npm install
 
 const config = require('./config/properties').value;
 const version = require('./package.json').version;
-const hydraExpress = require('fwsp-hydra-express');
+const hydraExpress = require('hydra-express');
 
 function registerRoutesCallback() {
   hydraExpress.registerRoutes('/v1/offers', require('./offers-v1-api'));
@@ -283,7 +283,7 @@ $ npm run test
 
 ## Hydra Express Plugins
 
-`HydraExpressPlugin` extends `HydraPlugin`. See the [Hydra plugin documention](https://github.com/flywheelsports/fwsp-hydra/blob/master/plugins.md) for more details.
+`HydraExpressPlugin` extends `HydraPlugin`. See the [Hydra plugin documention](https://github.com/flywheelsports/hydra/blob/master/plugins.md) for more details.
 
 Some caveats for `HydraExpressPlugin` vs `HydraPlugin`:
 
