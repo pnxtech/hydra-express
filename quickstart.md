@@ -7,7 +7,7 @@ Hydra requires the use of a [Redis](http://redis.io/) server. If you've never us
 
 If you're already using Redis then congratulations you've already leveled up, feel free to skip to step 2!
 
-There are lots of ways to obtain access to a Redis server.  One of the easiest ways is to sign up for a free tier via a provider such as [RedisLabs](https://redislabs.com/pricing). 
+There are lots of ways to obtain access to a Redis server.  One of the easiest ways is to sign up for a free tier via a provider such as [RedisLabs](https://redislabs.com/pricing).
 
 If you're comfortable with Docker you can install the [official Redis image](https://hub.docker.com/_/redis/) in just minutes. This is a nice option for PC users.
 
@@ -51,7 +51,7 @@ Let's build a service called hello. We'll mostly just select the defaults.
 ```shell
 $ yo fwsp-hydra
 ? Name of the service (`-service` will be appended automatically) hello
-? Host the service runs on? 
+? Host the service runs on?
 ? Port the service runs on? 0
 ? What does this service do? Says hello
 ? Does this service need auth? No
@@ -78,7 +78,7 @@ Done!
 'cd hello-service' then 'npm install' and 'npm start'
 ```
 
-Here's what was created: 
+Here's what was created:
 ```
 .
 ├── README.md
@@ -96,13 +96,13 @@ Here's what was created:
 ```
 
 Edit the `routes/hello-v1-routes.js` to make things more interesting.
-Change line 18 from: 
+Change line 18 from:
 
 ```javascript
    result: {}
 ```
 
-to: 
+to:
 
 ```javascript
     result: {
@@ -164,6 +164,6 @@ $ hydra-cli routes
 }
 ```
 
-This information is being emitted by our service and it allows services to discover one another and send messages to each other.  Combined with the [Hydra-Router](https://github.com/flywheelsports/fwsp-hydra-router) you can build an entire network of microservices.
+This information is being emitted by our service and it allows services to discover one another and send messages to each other.  Combined with the [Hydra-Router](https://github.com/flywheelsports/hydra-router) you can build an entire network of microservices.
 
-To found out what you can do with your new microservice see the [Hydra methods](https://github.com/flywheelsports/fwsp-hydra/blob/master/documentation.md#hydra-methods).
+To found out what you can do with your new microservice see the [Hydra methods](https://github.com/flywheelsports/hydra/blob/master/documentation.md#hydra-methods).
