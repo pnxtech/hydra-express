@@ -33,11 +33,5 @@ There are many projects on NPM which contain the name `hydra`. The following are
 
 ### Articles
 
-* [What is Hydra?](https://medium.com/@cjus/what-is-hydra-226db88fc075#.c9jm9l3ql)
-* [Using Hydra’s CLI](https://medium.com/@cjus/using-hydras-cli-f66f56fe355d#.57ep34fv2)
-* [Hydra, AWS, and Docker: a microservices deployment story](https://medium.com/@cjus/hydra-aws-and-docker-a-microservices-deployment-story-ce7c3f4abad9#.rqw11heff)
-
-On RisingStack:
-
 * [Tutorial: Building ExpressJS-based microservices using Hydra](https://community.risingstack.com/tutorial-building-expressjs-based-microservices-using-hydra/)
 * [Building a Microservices Example Game with Distributed Messaging](https://community.risingstack.com/building-a-microservices-example-game-with-distributed-messaging/)
