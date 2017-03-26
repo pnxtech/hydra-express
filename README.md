@@ -6,13 +6,18 @@ Hydra-Express is a light-weight library for building NodeJS and ExpressJS based 
 
 Hydra offers features such as service discovery, distributed messaging, message load balancing, logging, presence, and health monitoring. 
 
-> Hydra-Express replies on an instance of Redis, if you need to learn more about Redis, see our [Redis quick start guide](https://youtu.be/eX7EamF_WuA).
+[See our quick start guide](https://www.hydramicroservice.com/docs/quick-start/)
 
 ### Documentation
 
-Read the [Full documentation](documentation.md)
+We're building a dedicated documentation site for hydra at: https://www.hydramicroservice.com
+Our older docs are still available at: [Full documentation](documentation.md)
 
 Interested in running Hydra-express on AWS using Docker containers and Swarm mode? See: https://github.com/cjus/hydra-and-aws-in-docker-swarm
+
+### Join us on Slack!
+
+Are you using or planning on using Hydra on your project? Join us on Slack for more direct support. https://fwsp-hydra.slack.com To join, email cjus34@gmail.com with your desired username and email address (for invite).
 
 ### Related projects
 
