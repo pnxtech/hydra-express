@@ -395,19 +395,23 @@ class HydraExpress {
     * @description Fatal error handler.
     * @param {function} err - error handler function
     */
+    process.on('cleanup', () => {
+      this._shutdown();
+      process.exit(0);
+    });
+    process.on('SIGTERM', () => process.emit('cleanup'));
+    process.on('SIGINT', () => process.emit('cleanup'));
     process.on('uncaughtException', (err) => {
       let stack = err.stack;
-
       delete err.__cached_trace__;
       delete err.__previous__;
       delete err.domain;
-
       this.log('fatal', Utils.safeJSONStringify({
         event: 'error',
         error: err.name,
         stack: stack
       }));
-      process.exit(1);
+      process.emit('cleanup');
     });
 
     /**
