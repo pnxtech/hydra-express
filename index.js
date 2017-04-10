@@ -399,8 +399,18 @@ class HydraExpress {
       this._shutdown();
       process.exit(0);
     });
-    process.on('SIGTERM', () => process.emit('cleanup'));
-    process.on('SIGINT', () => process.emit('cleanup'));
+    process.on('SIGTERM', () => {
+      this.log('fatal', 'Received SIGTERM');
+      process.emit('cleanup');
+    });
+    process.on('SIGINT', () => {
+      this.log('fatal', 'Received SIGINT');
+      process.emit('cleanup');
+    });
+    process.on('unhandledRejection', (reason, _p) => {
+      this.log('fatal', reason);
+      process.emit('cleanup');
+    });
     process.on('uncaughtException', (err) => {
       let stack = err.stack;
       delete err.__cached_trace__;
