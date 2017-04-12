@@ -8,6 +8,8 @@ Hydra offers features such as service discovery, distributed messaging, message 
 
 [See our quick start guide](https://www.hydramicroservice.com/docs/quick-start/)
 
+Using Hapi or Koa? Then checkout the [Hydra Integration Project](https://www.npmjs.com/package/hydra-integration).
+
 ### Documentation
 
 We're building a dedicated documentation site for hydra at: https://www.hydramicroservice.com
