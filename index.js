@@ -408,7 +408,8 @@ class HydraExpress {
       process.emit('cleanup');
     });
     process.on('unhandledRejection', (reason, _p) => {
-      this.log('fatal', reason);
+      this.log('fatal', Utils.safeJSONStringify(reason));
+      console.log(reason); // necessary for full stack trace
       process.emit('cleanup');
     });
     process.on('uncaughtException', (err) => {
