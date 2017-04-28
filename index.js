@@ -20,7 +20,8 @@ Promise.series = (iterable, action) => {
   );
 };
 
-const ServerResponse = require('fwsp-server-response');
+const hydra = require('hydra');
+const ServerResponse = hydra.getServerResponse();
 let serverResponse = new ServerResponse();
 
 const bodyParser = require('body-parser');
@@ -35,12 +36,6 @@ const path = require('path');
 const responseTime = require('response-time');
 const Utils = require('fwsp-jsutils');
 const jwtAuth = require('fwsp-jwt-auth');
-const hydra = require('hydra');
-
-const HTTP_OK = 200;
-const HTTP_UNAUTHORIZED = 401;
-const HTTP_NOT_FOUND = 404;
-const HTTP_SERVER_ERROR = 500;
 
 let app = express();
 
@@ -508,7 +503,7 @@ class HydraExpress {
       */
       app.use((req, res, next) => {
         let err = new Error('Not Found');
-        err.status = HTTP_NOT_FOUND;
+        err.status = ServerResponse.HTTP_NOT_FOUND;
         next(err);
       });
 
@@ -519,8 +514,8 @@ class HydraExpress {
       * @param {function} _next - express next handler
       */
       app.use((err, req, res, _next) => {
-        let errCode = err.status || HTTP_SERVER_ERROR;
-        if (err.status !== HTTP_NOT_FOUND) {
+        let errCode = err.status || ServerResponse.HTTP_SERVER_ERROR;
+        if (err.status !== ServerResponse.HTTP_NOT_FOUND) {
           this.appLogger.fatal({
             event: 'error',
             error: err.name,
@@ -583,7 +578,7 @@ class HydraExpress {
     return (req, res, next) => {
       let authHeader = req.headers.authorization;
       if (!authHeader) {
-        this.sendResponse(HTTP_UNAUTHORIZED, res, {
+        this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
           result: {
             reason: 'Invalid token'
           }
@@ -597,14 +592,14 @@ class HydraExpress {
               next();
             })
             .catch((err) => {
-              this.sendResponse(HTTP_UNAUTHORIZED, res, {
+              this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
                 result: {
                   reason: err.message
                 }
               });
             });
         } else {
-          this.sendResponse(HTTP_UNAUTHORIZED, res, {
+          this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
             result: {
               reason: 'Invalid token'
             }
