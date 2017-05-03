@@ -20,27 +20,20 @@ Promise.series = (iterable, action) => {
   );
 };
 
-const ServerResponse = require('fwsp-server-response');
+const hydra = require('hydra');
+const Utils = hydra.getUtilsHelper();
+const ServerResponse = hydra.getServerResponseHelper();
 let serverResponse = new ServerResponse();
 
 const bodyParser = require('body-parser');
-const cluster = require('cluster');
 const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const http = require('http');
 const moment = require('moment');
-const os = require('os');
 const path = require('path');
 const responseTime = require('response-time');
-const Utils = require('fwsp-jsutils');
 const jwtAuth = require('fwsp-jwt-auth');
-const hydra = require('hydra');
-
-const HTTP_OK = 200;
-const HTTP_UNAUTHORIZED = 401;
-const HTTP_NOT_FOUND = 404;
-const HTTP_SERVER_ERROR = 500;
 
 let app = express();
 
@@ -108,7 +101,6 @@ class HydraExpress {
         'serviceName': '',
         'serviceDescription': ''
       },
-      'version': '',
       'registerRoutesCallback': ''
     };
 
@@ -135,14 +127,14 @@ class HydraExpress {
   }
 
   /**
-  * @name init
+  * @name _init
   * @summary Initialize HydraExpress using a configuration object.
   * @private
   * @throws Throws an Error() if config is found to be invalid
   * @param {object} config - configuration as described in the projects readme
   * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
-  init(config) {
+  _init(config) {
     return new Promise((resolve, reject) => {
       if (!config.hydra) {
         reject(new Error('Config missing hydra block'));
@@ -161,8 +153,6 @@ class HydraExpress {
       let missingFields = this.validateConfig(config);
       if (missingFields.length) {
         reject(new Error(`Config missing fields: ${missingFields.join(' ')}`));
-      } else if (!config.version) {
-        reject(new Error('Config missing version parameter'));
       } else if (!config.registerRoutesCallback) {
         reject(new Error('Config missing registerRoutesCallback parameter'));
       } else {
@@ -300,83 +290,33 @@ class HydraExpress {
   * @return {undefined}
   */
   start(resolve, _reject) {
-    if (!this.config.cluster || this.config.cluster !== true) {
-      let serviceInfo;
-      hydra.init(this.config)
-        .then((config) => {
-          this.config = config;
-          return hydra.registerService();
-        })
-        .then((_serviceInfo) => {
-          serviceInfo = _serviceInfo;
-          this.log('start', `${this.config.hydra.serviceName} (v.${this.config.version}) server listening on port ${this.config.hydra.servicePort}`);
-          this.log('info', `Using environment: ${this.config.environment}`);
-          this.initWorker();
-          return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
-        })
-        .then((..._results) => {
-          return Promise.delay(2000);
-        })
-        .then(() => resolve(serviceInfo))
-        .catch((err) => this.log('error', err.toString()));
-    } else {
-      if (cluster.isMaster) {
-        const numWorkers = this.config.processes || os.cpus().length;
-
-        console.log(`${this.config.hydra.serviceName} (v.${this.config.version})`);
-        console.log(`Using environment: ${this.config.environment}`);
-        console.log('info', `Master cluster setting up ${numWorkers} workers...`);
-
-        for (let i = 0; i < numWorkers; i++) {
-          cluster.fork();
-        }
-
-        /**
-         * @param {object} worker - worker process object
-         */
-        cluster.on('online', (worker) => {
-          this.log('info', `Worker ${worker.process.pid} is online`);
-        });
-
-        /**
-         * @param {object} worker - worker process object
-         * @param {number} code - process exit code
-         * @param {number} signal - signal that caused the process shutdown
-         */
-        cluster.on('exit', (worker, code, signal) => {
-          this.log('error', `Worker ${worker.process.pid} died with code ${code}, and signal: ${signal}`);
-          this.log('info', 'Starting a new worker');
-          cluster.fork();
-        });
-
-        resolve({});
-      } else {
-        hydra.init(this.config)
-          .then((config) => {
-            this.config = config;
-            return hydra.registerService();
-          })
-          .then((_serviceInfo) => {
-            this.initWorker();
-            Promise.delay(2000).then(() => {
-              resolve({
-                serviceName: this.config.hydra.serviceName,
-                serviceIP: this.config.hydra.serviceIP,
-                servicePort: this.config.hydra.servicePort
-              });
-            });
-          });
-      }
-    }
+    let serviceInfo;
+    hydra.init(this.config)
+      .then((config) => {
+        this.config = config;
+        return hydra.registerService();
+      })
+      .then((_serviceInfo) => {
+        serviceInfo = _serviceInfo;
+        this.log('start', `${hydra.getServiceName()} (v.${hydra.getInstanceVersion()}) server listening on port ${this.config.hydra.servicePort}`);
+        this.log('info', `Using environment: ${this.config.environment}`);
+        this.initService();
+        return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
+      })
+      .then((..._results) => {
+        return Promise.delay(2000);
+      })
+      .then(() => resolve(serviceInfo))
+      .catch((err) => this.log('error', err.toString()));
   }
 
   /**
-   * @name initWorker
-   * @summary Initialize a worker process
+   * @name initService
+   * @summary Initialize service
    * @private
    * @return {undefined}
    */
-  initWorker() {
+  initService() {
     app.use(cors());
     app.use(responseTime());
 
@@ -387,7 +327,7 @@ class HydraExpress {
     * @param {function} next - express next handler
     */
     app.use((req, res, next) => {
-      res.set('X-Process-Id', process.pid);
+      res.set('x-process-id', process.pid);
       next();
     });
 
@@ -508,7 +448,7 @@ class HydraExpress {
       */
       app.use((req, res, next) => {
         let err = new Error('Not Found');
-        err.status = HTTP_NOT_FOUND;
+        err.status = ServerResponse.HTTP_NOT_FOUND;
         next(err);
       });
 
@@ -519,8 +459,8 @@ class HydraExpress {
       * @param {function} _next - express next handler
       */
       app.use((err, req, res, _next) => {
-        let errCode = err.status || HTTP_SERVER_ERROR;
-        if (err.status !== HTTP_NOT_FOUND) {
+        let errCode = err.status || ServerResponse.HTTP_SERVER_ERROR;
+        if (err.status !== ServerResponse.HTTP_NOT_FOUND) {
           this.appLogger.fatal({
             event: 'error',
             error: err.name,
@@ -583,7 +523,7 @@ class HydraExpress {
     return (req, res, next) => {
       let authHeader = req.headers.authorization;
       if (!authHeader) {
-        this.sendResponse(HTTP_UNAUTHORIZED, res, {
+        this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
           result: {
             reason: 'Invalid token'
           }
@@ -597,14 +537,14 @@ class HydraExpress {
               next();
             })
             .catch((err) => {
-              this.sendResponse(HTTP_UNAUTHORIZED, res, {
+              this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
                 result: {
                   reason: err.message
                 }
               });
             });
         } else {
-          this.sendResponse(HTTP_UNAUTHORIZED, res, {
+          this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
             result: {
               reason: 'Invalid token'
             }
@@ -648,21 +588,33 @@ class IHydraExpress extends HydraExpress {
   * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
   init(config, version, registerRoutesCallback, registerMiddlewareCallback) {
+    if (typeof config === 'string') {
+      const configHelper = hydra.getConfigHelper();
+      return configHelper.init(config)
+        .then(() => {
+          return this.init(configHelper.getObject(), version, registerRoutesCallback, registerMiddlewareCallback);
+        })
+        .catch((_err) => {
+          throw new Error(`Unable to load config from ${config}`);
+        });
+    }
+
     let inner = {};
     if (typeof version === 'function') {
       registerMiddlewareCallback = registerRoutesCallback;
       registerRoutesCallback = version;
-      inner.version = config.version || require('./package.json').version;
+      // inner.version = config.version || require(`${__dirname}/package.json`).version;
     } else if (version) {
       inner.version = version;
     }
+
     if (registerRoutesCallback) {
       inner.registerRoutesCallback = registerRoutesCallback;
     }
     if (registerMiddlewareCallback) {
       inner.registerMiddlewareCallback = registerMiddlewareCallback;
     }
-    return super.init(Object.assign({}, config, inner));
+    return super._init(Object.assign({}, config, inner));
   }
 
   /**
