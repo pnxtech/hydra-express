@@ -373,6 +373,7 @@ class HydraExpress {
     app.use(helmet.hidePoweredBy({setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
+    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: false}));
 
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
