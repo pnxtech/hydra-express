@@ -370,7 +370,7 @@ class HydraExpress {
     */
     const ninetyDaysInMilliseconds = moment.duration(90, 'days').asMilliseconds();
     app.use(helmet());
-    app.use(helmet.hidePoweredBy({setTo: `${this.config.hydra.serviceName}/${this.config.version}`}));
+    app.use(helmet.hidePoweredBy({setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
     app.use(bodyParser.urlencoded({extended: false}));
