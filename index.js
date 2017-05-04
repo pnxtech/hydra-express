@@ -374,7 +374,6 @@ class HydraExpress {
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
     app.use(bodyParser.urlencoded({extended: false}));
-    app.use(bodyParser.json());
 
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
 
