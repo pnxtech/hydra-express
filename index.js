@@ -168,8 +168,16 @@ class HydraExpress {
         * @param {string} entry - log entry
         */
         hydra.on('log', (entry) => {
+          if (entry.msg) {
+            if (entry.msg.indexOf('Unavailable hydra-router instances') > -1) {
+              // surpress this message since use of hydra-router is optional
+              return;
+            }
+            entry.message = entry.msg;
+          }
           this.log(entry.type, entry.message);
         });
+
         return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config))
           .then((..._results) => {
             if (config.jwtPublicCert) {
