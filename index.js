@@ -178,14 +178,7 @@ class HydraExpress {
           this.log(entry.type, entry.message);
         });
 
-        return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config))
-          .then((..._results) => {
-            if (config.jwtPublicCert) {
-              return jwtAuth.loadCerts(null, config.jwtPublicCert)
-                .catch((_err) => reject(new Error('Can\'t load public cert')));
-            }
-          })
-          .then(() => this.start(resolve, reject))
+        return Promise.try(this.start(resolve, reject))
           .catch((err) => this.log('error', err.toString()));
       }
     });
@@ -302,14 +295,15 @@ class HydraExpress {
     hydra.init(this.config)
       .then((config) => {
         this.config = config;
-        return hydra.registerService();
+        return Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config));
       })
+      .then(() => hydra.registerService())
       .then((_serviceInfo) => {
         serviceInfo = _serviceInfo;
         this.log('start', `${hydra.getServiceName()} (v.${hydra.getInstanceVersion()}) server listening on port ${this.config.hydra.servicePort}`);
         this.log('info', `Using environment: ${this.config.environment}`);
         this.initService();
-        return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
+        return Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady());
       })
       .then((..._results) => {
         return Promise.delay(2000);
