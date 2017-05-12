@@ -177,7 +177,7 @@ class HydraExpress {
           this.log(entry.type, entry.message);
         });
 
-        return Promise.try(this.start(resolve, reject))
+        return this.start(resolve, reject)
           .catch((err) => this.log('error', err.toString()));
       }
     });
@@ -282,7 +282,7 @@ class HydraExpress {
   */
   start(resolve, _reject) {
     let serviceInfo;
-    hydra.init(this.config)
+    return hydra.init(this.config)
       .then((config) => {
         this.config = config;
         return Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config));
