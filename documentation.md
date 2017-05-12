@@ -71,7 +71,7 @@ In the example above, the `serviceInfo` on the then statement returns an object 
 
 ## Logging and error reporting
 
-HydraExpress includes a `log` member which allows you to log into to both the console and log file.  
+HydraExpress includes a `log` member which allows you to log into to both the console and log file.
 
 ```javascript
 hydraExpress.log('error', message);
@@ -208,15 +208,10 @@ sendResponse(httpCode, res, data)
 ```
 
 #### validateJwtToken
-Express middleware to validate a JWT sent via the req.authorization header
-```javascript
-/**
-* @name validateJwtToken
-* @summary Express middleware to validate a JWT sent via the req.authorization header
-* @return {function} Middleware function
-*/
-validateJwtToken()
-```
+
+*DEPRECATED*
+
+This functionality has been extracted to the [jwt-auth plugin](http://github.com/flywheelsports/hydra-express-plugin-jwt-auth).
 
 ## Hydra / Express configuration
 

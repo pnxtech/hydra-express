@@ -33,7 +33,6 @@ const http = require('http');
 const moment = require('moment');
 const path = require('path');
 const responseTime = require('response-time');
-const jwtAuth = require('fwsp-jwt-auth');
 
 let app = express();
 
@@ -222,15 +221,6 @@ class HydraExpress {
   */
   getHydra() {
     return hydra;
-  }
-
-  /**
-  * @name getJwtAuth
-  * @summary Retrieve the underlying jwtAuth object
-  * @return {object} jwtAuth - jwtAuth object
-  */
-  getJwtAuth() {
-    return jwtAuth;
   }
 
   /**
@@ -516,45 +506,6 @@ class HydraExpress {
     serverResponse.sendResponse(httpCode, res, data);
   }
 
-  /**
-  * @name _validateJwtToken
-  * @summary Express middleware to validate a JWT sent via the req.authorization header
-  * @return {function} Middleware function
-  */
-  _validateJwtToken() {
-    return (req, res, next) => {
-      let authHeader = req.headers.authorization;
-      if (!authHeader) {
-        this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
-          result: {
-            reason: 'Invalid token'
-          }
-        });
-      } else {
-        let token = authHeader.split(' ')[1];
-        if (token) {
-          return jwtAuth.verifyToken(token)
-            .then((decoded) => {
-              req.authToken = decoded;
-              next();
-            })
-            .catch((err) => {
-              this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
-                result: {
-                  reason: err.message
-                }
-              });
-            });
-        } else {
-          this.sendResponse(ServerResponse.HTTP_UNAUTHORIZED, res, {
-            result: {
-              reason: 'Invalid token'
-            }
-          });
-        }
-      }
-    };
-  }
 }
 
 /* ************************************************************************************************ */
@@ -647,15 +598,6 @@ class IHydraExpress extends HydraExpress {
   }
 
   /**
-  * @name getJwtAuth
-  * @summary Retrieve the underlying jwtAuth object
-  * @return {object} jwtAuth - jwtAuth object
-  */
-  getJwtAuth() {
-    return super.getJwtAuth();
-  }
-
-  /**
   * @name getRuntimeConfig
   * @summary Retrieve loaded configuration object
   * @return {object} config - immutable object
@@ -698,14 +640,6 @@ class IHydraExpress extends HydraExpress {
     super._sendResponse(httpCode, res, data);
   }
 
-  /**
-  * @name validateJwtToken
-  * @summary Express middleware to validate a JWT sent via the req.authorization header
-  * @return {function} Middleware function
-  */
-  validateJwtToken() {
-    return super._validateJwtToken();
-  }
 }
 
 module.exports = new IHydraExpress;
