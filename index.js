@@ -285,7 +285,7 @@ class HydraExpress {
     return hydra.init(this.config)
       .then((config) => {
         this.config = config;
-        return Promise.series(this.registeredPlugins, plugin => plugin.setConfig(config));
+        return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config));
       })
       .then(() => hydra.registerService())
       .then((_serviceInfo) => {
@@ -293,7 +293,7 @@ class HydraExpress {
         this.log('start', `${hydra.getServiceName()} (v.${hydra.getInstanceVersion()}) server listening on port ${this.config.hydra.servicePort}`);
         this.log('info', `Using environment: ${this.config.environment}`);
         this.initService();
-        return Promise.series(this.registeredPlugins, plugin => plugin.onServiceReady());
+        return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
       })
       .then((..._results) => {
         return Promise.delay(2000);
@@ -374,14 +374,6 @@ class HydraExpress {
     app.use('/', express.static(this.config.appPath));
 
     app.set('port', this.config.servicePort);
-
-    if (this.config.environment !== 'development') {
-      this.config.maxSockets = this.config.maxSockets || 500;
-      if (this.config.maxSockets) {
-        // increase max socket when used outside of development
-        http.globalAgent.maxSockets = this.config.maxSockets;
-      }
-    }
 
     this.server = http.createServer(app);
 
