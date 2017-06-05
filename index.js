@@ -176,7 +176,6 @@ class HydraExpress {
           }
           this.log(entry.type, entry.message);
         });
-
         return this.start(resolve, reject)
           .catch((err) => this.log('error', err.toString()));
       }
@@ -309,9 +308,8 @@ class HydraExpress {
    * @return {undefined}
    */
   initService() {
-    app.use(cors());
+    app.use(cors(Object.assign({}, this.config.cors)));
     app.use(responseTime());
-
     /**
     * @description Stamp every request with the process id that handled it.
     * @param {object} req - express request object
@@ -364,10 +362,9 @@ class HydraExpress {
     app.use(helmet());
     app.use(helmet.hidePoweredBy({setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
-
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: false}));
-
+    let bodyParserConfig = Object.assign({json: {}, urlencoded: {extended: false}}, this.config.bodyParser);
+    app.use(bodyParser.json(bodyParserConfig.json));
+    app.use(bodyParser.urlencoded(bodyParserConfig.urlencoded));
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
 
     this.config.appPath = path.join('./', 'public');
