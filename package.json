@@ -26,7 +26,7 @@
     "body-parser": "1.17.1",
     "cors": "2.8.3",
     "express": "4.15.3",
-		"hydra": "1.4.7",
+		"hydra": "1.4.8",
     "helmet": "3.6.0",
     "moment": "2.18.1",
     "response-time": "2.3.2"
