@@ -294,11 +294,12 @@ class HydraExpress {
         this.initService();
         return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
       })
-      .then((..._results) => {
-        return Promise.delay(2000);
-      })
+      .then(() => Promise.delay(2000))
       .then(() => resolve(serviceInfo))
-      .catch((err) => this.log('error', err.toString()));
+      .catch((err) => {
+        this.log('error', {err});
+        process.emit('cleanup');
+      });
   }
 
   /**
