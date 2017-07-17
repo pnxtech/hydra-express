@@ -5,6 +5,8 @@
 */
 'use strict';
 
+const debug = require('debug')('hydra-express');
+
 const Promise = require('bluebird');
 Promise.config({
   // Enables all warnings except forgotten return statements.
@@ -240,6 +242,9 @@ class HydraExpress {
   * @return {undefined}
    */
   log(type, message) {
+    let msg = (typeof message === 'object') ? Utils.safeJSONStringify(message) : message;
+    debug(`${type} ${msg}`);
+
     let suppressLogEmit = true;
     switch (type) {
       case 'fatal':
