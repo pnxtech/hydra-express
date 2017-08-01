@@ -187,12 +187,20 @@ class HydraExpress {
   /**
   * @name _shutdown
   * @summary Shutdown hydra-express safely.
-  * @return {undefined}
+  * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
   _shutdown() {
-    this.server.close(() => {
-      this.log('error', 'Service is shutting down.');
-      hydra.shutdown();
+    return new Promise((resolve, reject) => {
+      this.server.close(() => {
+        this.log('error', 'Service is shutting down.');
+        hydra.shutdown()
+          .then((result) => {
+            resolve(result);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     });
   }
 
@@ -333,15 +341,16 @@ class HydraExpress {
     * @param {function} err - error handler function
     */
     process.on('cleanup', () => {
-      this._shutdown();
-      process.exit(0);
+      this._shutdown()
+        .then(() => {
+          process.exit(1);
+        })
+        .catch((_err) => {
+          process.exit(1);
+        });
     });
-    process.on('SIGTERM', () => {
-      this.log('fatal', 'Received SIGTERM');
-      process.emit('cleanup');
-    });
-    process.on('SIGINT', () => {
-      this.log('fatal', 'Received SIGINT');
+    process.on('exit', () => {
+      console.trace();
       process.emit('cleanup');
     });
     process.on('unhandledRejection', (reason, _p) => {
@@ -359,6 +368,14 @@ class HydraExpress {
         error: err.name,
         stack: stack
       }));
+      process.emit('cleanup');
+    });
+    process.on('SIGTERM', () => {
+      this.log('fatal', 'Received SIGTERM');
+      process.emit('cleanup');
+    });
+    process.on('SIGINT', () => {
+      this.log('fatal', 'Received SIGINT');
       process.emit('cleanup');
     });
 
@@ -570,10 +587,10 @@ class IHydraExpress extends HydraExpress {
   /**
   * @name shutdown
   * @summary Shutdown hydra-express safely.
-  * @return {undefined}
+  * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
   shutdown() {
-    super._shutdown();
+    return super._shutdown();
   }
 
   /**
