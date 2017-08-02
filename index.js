@@ -349,10 +349,6 @@ class HydraExpress {
           process.exit(1);
         });
     });
-    process.on('exit', () => {
-      console.trace();
-      process.emit('cleanup');
-    });
     process.on('unhandledRejection', (reason, _p) => {
       this.log('fatal', Utils.safeJSONStringify(reason));
       console.log(reason); // necessary for full stack trace
