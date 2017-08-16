@@ -499,9 +499,7 @@ class HydraExpress {
       });
       app.use(routePath, routes[routePath]);
     });
-    if (routesList.length > 0) {
-      hydra.registerRoutes(routesList);
-    }
+    hydra.registerRoutes(routesList);
   }
 
   /**
