@@ -490,12 +490,11 @@ class HydraExpress {
         let routeInfo = route.route;
         // Skip router-level middleware, which will show up in the routes stack,
         // but with an undefined route property
-        if (routeInfo === undefined) {
-          return;
+        if (routeInfo) {
+          Object.keys(routeInfo.methods).forEach((method) => {
+            routesList.push(`[${method}]${routePath}${routeInfo.path}`);
+          });
         }
-        Object.keys(routeInfo.methods).forEach((method) => {
-          routesList.push(`[${method}]${routePath}${routeInfo.path}`);
-        });
       });
       app.use(routePath, routes[routePath]);
     });
