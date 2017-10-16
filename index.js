@@ -252,33 +252,32 @@ class HydraExpress {
   log(type, message) {
     let msg = (typeof message === 'object') ? Utils.safeJSONStringify(message) : message;
     debug(`${type} ${msg}`);
-
     let suppressLogEmit = true;
     switch (type) {
       case 'fatal':
         this.appLogger.fatal({
           event: type,
-          message
+          message: msg
         });
         hydra.sendToHealthLog('fatal', message, suppressLogEmit);
         break;
       case 'error':
         this.appLogger.error({
           event: type,
-          message
+          message: msg
         });
         hydra.sendToHealthLog('fatal', message, suppressLogEmit);
         break;
       case 'debug':
         this.appLogger.debug({
           event: type,
-          message
+          message: msg
         });
         break;
       default:
         this.appLogger.info({
           event: type,
-          message
+          message: msg
         });
         break;
     }
