@@ -432,45 +432,48 @@ class HydraExpress {
      * @description listen handler for server.
      */
     this.server.listen(this.config.hydra.servicePort, () => {
-      this.registerRoutesCallback && this.registerRoutesCallback();
+      Promise.resolve(this.registerRoutesCallback && this.registerRoutesCallback())
+        .then(routesRegistered => this._postRouteSetup());
+    });
+  }
 
-      app.use('/*', (req, res) => {
-        res.sendFile(path.resolve(this.config.appPath + '/index.html'));
-      });
+  _postRouteSetup() {
+    app.use('/*', (req, res) => {
+      res.sendFile(path.resolve(this.config.appPath + '/index.html'));
+    });
 
-      /**
-      * Post middleware init. Make sure to do this last.
-      */
+    /**
+    * Post middleware init. Make sure to do this last.
+    */
 
-      /**
-      * @param {object} req - express request object
-      * @param {object} res - express response object
-      * @param {function} next - express next handler
-      */
-      app.use((req, res, next) => {
-        let err = new Error('Not Found');
-        err.status = ServerResponse.HTTP_NOT_FOUND;
-        next(err);
-      });
+    /**
+    * @param {object} req - express request object
+    * @param {object} res - express response object
+    * @param {function} next - express next handler
+    */
+    app.use((req, res, next) => {
+      let err = new Error('Not Found');
+      err.status = ServerResponse.HTTP_NOT_FOUND;
+      next(err);
+    });
 
-      /**
-      * @param {object} err - express err object
-      * @param {object} req - express request object
-      * @param {object} res - express response object
-      * @param {function} _next - express next handler
-      */
-      app.use((err, req, res, _next) => {
-        let errCode = err.status || ServerResponse.HTTP_SERVER_ERROR;
-        if (err.status !== ServerResponse.HTTP_NOT_FOUND) {
-          this.appLogger.fatal({
-            event: 'error',
-            error: err.name,
-            stack: err.stack
-          });
-        }
-        res.status(errCode).json({
-          code: errCode
+    /**
+    * @param {object} err - express err object
+    * @param {object} req - express request object
+    * @param {object} res - express response object
+    * @param {function} _next - express next handler
+    */
+    app.use((err, req, res, _next) => {
+      let errCode = err.status || ServerResponse.HTTP_SERVER_ERROR;
+      if (err.status !== ServerResponse.HTTP_NOT_FOUND) {
+        this.appLogger.fatal({
+          event: 'error',
+          error: err.name,
+          stack: err.stack
         });
+      }
+      res.status(errCode).json({
+        code: errCode
       });
     });
   }
