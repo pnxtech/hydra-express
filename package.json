@@ -25,7 +25,7 @@
     "bluebird": "3.5.0",
     "body-parser": "1.17.1",
     "cors": "2.8.3",
-    "debug": "2.6.8",
+    "debug": "2.6.9",
     "express": "4.15.3",
     "helmet": "3.6.0",
     "hydra": "1.5.5",
