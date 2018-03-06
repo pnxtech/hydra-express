@@ -382,8 +382,20 @@ class HydraExpress {
     app.use(helmet.hidePoweredBy({setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`}));
     app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: false}));
+    if (this.config.cors) {
+      app.use(cors(Object.assign({}, this.config.cors)));
+    } else {
+      app.use(cors());
+    }
+
+    if (this.config.bodyParser) {
+      let bodyParserConfig = Object.assign({json: {}, urlencoded: {extended: false}}, this.config.bodyParser);
+      app.use(bodyParser.json(bodyParserConfig.json));
+      app.use(bodyParser.urlencoded(bodyParserConfig.urlencoded));
+    } else {
+      app.use(bodyParser.json());
+      app.use(bodyParser.urlencoded({extended: false}));
+    }
 
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
 
