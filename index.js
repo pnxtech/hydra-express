@@ -339,14 +339,17 @@ class HydraExpress {
     * @description Fatal error handler.
     * @param {function} err - error handler function
     */
+    let doOnce = 1;
     process.on('cleanup', () => {
-      this._shutdown()
-        .then(() => {
-          process.exit(1);
-        })
-        .catch((_err) => {
-          process.exit(1);
-        });
+      if (doOnce === 1) {
+        doOnce += 1;
+        setTimeout(() => {
+          this._shutdown()
+            .then(() => {
+              process.exit(1);
+            });
+        }, 1000);
+      }
     });
     process.on('unhandledRejection', (reason, _p) => {
       this.log('fatal', Utils.safeJSONStringify(reason));
