@@ -1,6 +1,6 @@
 {
   "name": "hydra-express",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.",
   "author": {
     "name": "Carlos Justiniano"
@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/flywheelsports/hydra-express#readme",
   "dependencies": {
-    "bluebird": "3.5.0",
-    "body-parser": "1.17.1",
-    "cors": "2.8.3",
-    "debug": "2.6.9",
-    "express": "4.15.3",
-    "helmet": "3.6.0",
-    "hydra": "1.6.2",
+    "bluebird": "3.5.1",
+    "body-parser": "1.18.2",
+    "cors": "2.8.4",
+    "debug": "3.1.0",
+    "express": "4.16.3",
+    "helmet": "3.12.0",
+    "hydra": "1.6.3",
     "moment": "2.21.0",
     "response-time": "2.3.2"
   },
