@@ -135,7 +135,7 @@ class HydraExpress {
   * @param {object} config - configuration as described in the projects readme
   * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
-  _init(config) {
+  _init(config, testMode = false) {
     return new Promise((resolve, reject) => {
       if (!config.hydra) {
         reject(new Error('Config missing hydra block'));
@@ -179,7 +179,7 @@ class HydraExpress {
           this.log(entry.type, entry.message);
         });
 
-        return this.start(resolve, reject);
+        return this.start(resolve, reject, testMode);
       }
     });
   }
@@ -291,9 +291,9 @@ class HydraExpress {
   * @private
   * @return {undefined}
   */
-  start(resolve, _reject) {
+  start(resolve, _reject, testMode = false) {
     let serviceInfo;
-    return hydra.init(this.config)
+    return hydra.init(this.config, testMode)
       .then((config) => {
         this.config = config;
         return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config));
