@@ -1,6 +1,6 @@
 {
   "name": "hydra-express",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.",
   "author": {
     "name": "Carlos Justiniano"
