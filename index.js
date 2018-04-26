@@ -590,7 +590,7 @@ class IHydraExpress extends HydraExpress {
       inner.registerMiddlewareCallback = registerMiddlewareCallback;
     }
     if (testMode === true) {
-      this.testMode === true;
+      this.testMode = true;
     }
     return super._init(Object.assign({}, config, inner));
   }
