@@ -1,13 +1,13 @@
 {
   "name": "hydra-express",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A module which wraps Hydra and ExpressJS to provide an out of the box microservice which can support API routes and handlers.",
   "author": {
     "name": "Carlos Justiniano"
   },
   "contributors": "https://github.com/flywheelsports/hydra-express/graphs/contributors",
   "scripts": {
-    "test": "mocha specs --reporter spec"
+    "test": "mocha specs --reporter spec --timeout 3000"
   },
   "engines": {
     "node": ">=6.2.1"
@@ -38,6 +38,7 @@
     "eslint-config-google": "0.7.1",
     "eslint-plugin-mocha": "4.9.0",
     "mocha": "3.3.0",
-    "superagent": "3.5.2"
+    "superagent": "3.5.2",
+    "redis-mock": "0.21.0"
   }
 }

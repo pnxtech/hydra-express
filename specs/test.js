@@ -7,20 +7,12 @@ const config = require('./properties').value;
 const version = require('../package.json').version;
 const hydraExpress = require('../index.js');
 
-describe('HydraExpress init', () => {
-  it('should rejected promise if missing version field during init', (done) => {
-    function registerRoutesCallback() {}
-    hydraExpress.init(config, null, registerRoutesCallback)
-      .catch((err) => {
-        expect(err.message).to.be.equal('Missing fields: version');
-        done();
-      });
-  });
 
+describe('HydraExpress init', () => {
   it('should rejected promiss if missing registerRoutesCallback during init', (done) => {
     hydraExpress.init(config, version)
       .catch((err) => {
-        expect(err.message).to.be.equal('Missing fields: registerRoutesCallback');
+        expect(err.message).to.be.equal('Config missing fields: registerRoutesCallback');
         done();
       });
   });
@@ -55,7 +47,7 @@ describe('HydraExpress service', () => {
           });
       })
       .catch((err) => {
-        console.log('err', err);
+        console.log('TEST ERROR', err);
       });
   }).timeout(5000);
 
