@@ -63,6 +63,7 @@ class HydraExpress {
   constructor() {
     this.config = null;
     this.server = null;
+    this.testMode = false;
     this.appLogger = defaultLogger();
     this.registeredPlugins = [];
   }
@@ -293,7 +294,7 @@ class HydraExpress {
   */
   start(resolve, _reject) {
     let serviceInfo;
-    return hydra.init(this.config)
+    return hydra.init(this.config, this.testMode)
       .then((config) => {
         this.config = config;
         return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config));
@@ -587,6 +588,9 @@ class IHydraExpress extends HydraExpress {
     }
     if (registerMiddlewareCallback) {
       inner.registerMiddlewareCallback = registerMiddlewareCallback;
+    }
+    if (config.testMode === true) {
+      this.testMode = true;
     }
     return super._init(Object.assign({}, config, inner));
   }
