@@ -562,12 +562,12 @@ class IHydraExpress extends HydraExpress {
   * @param {function} registerMiddlewareCallback - callback function to register middleware
   * @return {object} Promise - promise resolving to hydraexpress ready or failure
   */
-  init(config, version, registerRoutesCallback, registerMiddlewareCallback, testMode) {
+  init(config, version, registerRoutesCallback, registerMiddlewareCallback) {
     if (typeof config === 'string') {
       const configHelper = hydra.getConfigHelper();
       return configHelper.init(config)
         .then(() => {
-          return this.init(configHelper.getObject(), version, registerRoutesCallback, registerMiddlewareCallback, testMode);
+          return this.init(configHelper.getObject(), version, registerRoutesCallback, registerMiddlewareCallback);
         })
         .catch((_err) => {
           throw new Error(`Unable to load config from ${config}`);
@@ -589,7 +589,7 @@ class IHydraExpress extends HydraExpress {
     if (registerMiddlewareCallback) {
       inner.registerMiddlewareCallback = registerMiddlewareCallback;
     }
-    if (testMode === true) {
+    if (config.testMode === true) {
       this.testMode = true;
     }
     return super._init(Object.assign({}, config, inner));
