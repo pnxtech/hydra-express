@@ -292,7 +292,7 @@ class HydraExpress {
   * @private
   * @return {undefined}
   */
-  start(resolve, _reject) {
+  start(resolve, reject) {
     let serviceInfo;
     return hydra.init(this.config, this.testMode)
       .then((config) => {
@@ -312,6 +312,7 @@ class HydraExpress {
       .catch((err) => {
         this.log('error', {err});
         process.emit('cleanup');
+        reject(err);
       });
   }
 

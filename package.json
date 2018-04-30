@@ -7,7 +7,7 @@
   },
   "contributors": "https://github.com/flywheelsports/hydra-express/graphs/contributors",
   "scripts": {
-    "test": "mocha specs --reporter spec"
+    "test": "mocha specs --reporter spec --timeout 3000"
   },
   "engines": {
     "node": ">=6.2.1"
