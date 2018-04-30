@@ -1,5 +1,6 @@
 exports.value = {
   environment: 'development',
+  testMode: true,
   hydra: {
     serviceName: 'test-service',
     serviceDescription: 'Raison d\'etre',
