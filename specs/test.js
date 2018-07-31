@@ -8,7 +8,6 @@ const version = require('../package.json').version;
 const hydraExpress = require('../index.js');
 
 describe('HydraExpress init', () => {
-
   it('should rejected promiss if missing registerRoutesCallback during init', (done) => {
     hydraExpress.init(config, version)
       .catch((err) => {
@@ -51,4 +50,25 @@ describe('HydraExpress service', () => {
       });
   }).timeout(5000);
 
+  it.skip('should be able to register an https route and call it', (done) => {
+    let securedConfig = Object.assign({}, config);
+    securedConfig.hydra.serviceProtocol = 'https';
+    securedConfig.hydra.sslKey = __dirname + '/fake_ssl_key.pem';
+    securedConfig.hydra.sslCert = __dirname + '/fake_ssl_cert.pem';
+
+    hydraExpress.init(securedConfig, registerRoutesCallback)
+       .then((serviceInfo) => {
+         request
+           .get(`https://localhost:${serviceInfo.servicePort}/v1/info`)
+           .end((err, res) => {
+             expect(err).to.be.null;
+             expect(res.status).to.be.equal(200);
+             expect(res).to.have.property('info');
+             done();
+           });
+       })
+       .catch((err) => {
+         console.log('err', err);
+       });
+  });
 });
