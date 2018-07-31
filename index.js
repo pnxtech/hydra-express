@@ -1,12 +1,12 @@
 /**
-* HydraExpress Module
-* @description A module that binds Hydra and ExpressJS. This simplifies building API enabled microservices.
-* @author Carlos Justiniano
-*/
+ * HydraExpress Module
+ * @description A module that binds Hydra and ExpressJS. This simplifies building API enabled microservices.
+ * @author Carlos Justiniano
+ */
 'use strict';
 
 const debug = require('debug')('hydra-express');
-
+const fs = require('fs');
 const Promise = require('bluebird');
 Promise.config({
   // Enables all warnings except forgotten return statements.
@@ -32,6 +32,7 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const http = require('http');
+const https = require('https');
 const moment = require('moment');
 const path = require('path');
 const responseTime = require('response-time');
@@ -41,7 +42,10 @@ let app = express();
 let defaultLogger = () => {
   let dump = (level, obj) => {
     console.log(level.toUpperCase());
-    console.dir(obj, {colors: true, depth: null});
+    console.dir(obj, {
+      colors: true,
+      depth: null
+    });
   };
   return {
     fatal: (obj) => dump('FATAL', obj),
@@ -52,14 +56,14 @@ let defaultLogger = () => {
 };
 
 /**
-* @name HydraExpress
-* @summary HydraExpress class
-*/
+ * @name HydraExpress
+ * @summary HydraExpress class
+ */
 class HydraExpress {
   /**
-  * @name constructor
-  * @return {undefined}
-  */
+   * @name constructor
+   * @return {undefined}
+   */
   constructor() {
     this.config = null;
     this.server = null;
@@ -90,12 +94,12 @@ class HydraExpress {
   }
 
   /**
-  * @name validateConfig
-  * @summary Validates a configuration object to ensure all required fields are present
-  * @private
-  * @param {object} config - config object
-  * @return {array} array - of missing fields or empty array
-  */
+   * @name validateConfig
+   * @summary Validates a configuration object to ensure all required fields are present
+   * @private
+   * @param {object} config - config object
+   * @return {array} array - of missing fields or empty array
+   */
   validateConfig(config) {
     let missingFields = [];
     let requiredMembers = {
@@ -129,13 +133,13 @@ class HydraExpress {
   }
 
   /**
-  * @name _init
-  * @summary Initialize HydraExpress using a configuration object.
-  * @private
-  * @throws Throws an Error() if config is found to be invalid
-  * @param {object} config - configuration as described in the projects readme
-  * @return {object} Promise - promise resolving to hydraexpress ready or failure
-  */
+   * @name _init
+   * @summary Initialize HydraExpress using a configuration object.
+   * @private
+   * @throws Throws an Error() if config is found to be invalid
+   * @param {object} config - configuration as described in the projects readme
+   * @return {object} Promise - promise resolving to hydraexpress ready or failure
+   */
   _init(config) {
     return new Promise((resolve, reject) => {
       if (!config.hydra) {
@@ -151,6 +155,9 @@ class HydraExpress {
       config.hydra.serviceIP = config.hydra.serviceIP || '';
       config.hydra.servicePort = config.hydra.servicePort || 0;
       config.hydra.serviceType = config.hydra.serviceType || '';
+      config.hydra.serviceProtocol = config.hydra.serviceProtocol || 'http';
+      //Check if we will need the HTTPS server and all needed files are present
+      config.isSecured = (config.hydra.serviceProtocol == 'https' && config.hydra.sslKey != undefined && config.hydra.sslCert != undefined);
 
       let missingFields = this.validateConfig(config);
       if (missingFields.length) {
@@ -159,16 +166,23 @@ class HydraExpress {
         reject(new Error('Config missing registerRoutesCallback parameter'));
       } else {
         config.hydra.serviceVersion = config.version;
+        if (config.isSecured) {
+          config.ssl_key = fs.readFileSync(config.hydra.sslKey);
+          config.ssl_cert = fs.readFileSync(config.hydra.sslCert);
+          //Avoid storing this information in REDIS and useless because we loaded the files
+          delete config.hydra.sslKey;
+          delete config.hydra.sslCert;
+        }
         this.config = config;
         this.config.environment = this.config.environment || 'development';
         this.registerRoutesCallback = config.registerRoutesCallback;
         this.registerMiddlewareCallback = config.registerMiddlewareCallback;
         /**
-        * Start the log event Listener as soon as possible in order to
-        * receive redis initialization errors.
-        *
-        * @param {string} entry - log entry
-        */
+         * Start the log event Listener as soon as possible in order to
+         * receive redis initialization errors.
+         *
+         * @param {string} entry - log entry
+         */
         hydra.on('log', (entry) => {
           if (entry.msg) {
             if (entry.msg.indexOf('Unavailable hydra-router instances') > -1) {
@@ -186,10 +200,10 @@ class HydraExpress {
   }
 
   /**
-  * @name _shutdown
-  * @summary Shutdown hydra-express safely.
-  * @return {object} Promise - promise resolving to hydraexpress ready or failure
-  */
+   * @name _shutdown
+   * @summary Shutdown hydra-express safely.
+   * @return {object} Promise - promise resolving to hydraexpress ready or failure
+   */
   _shutdown() {
     return new Promise((resolve, reject) => {
       this.server.close(() => {
@@ -206,38 +220,38 @@ class HydraExpress {
   }
 
   /**
-  * @name getExpress
-  * @summary Retrieve the ExpressJS object
-  * @return {object} express - ExpressJS object
-  */
+   * @name getExpress
+   * @summary Retrieve the ExpressJS object
+   * @return {object} express - ExpressJS object
+   */
   getExpress() {
     return express;
   }
 
   /**
-  * @name getExpressApp
-  * @summary Retrieve the ExpressJS app object
-  * @return {object} app - express app object
-  */
+   * @name getExpressApp
+   * @summary Retrieve the ExpressJS app object
+   * @return {object} app - express app object
+   */
   getExpressApp() {
     return app;
   }
 
   /**
-  * @name getHydra
-  * @summary Retrieve the Hydra object
-  * @private
-  * @return {object} hydra - Hydra object
-  */
+   * @name getHydra
+   * @summary Retrieve the Hydra object
+   * @private
+   * @return {object} hydra - Hydra object
+   */
   getHydra() {
     return hydra;
   }
 
   /**
-  * @name getRuntimeConfig
-  * @summary Retrieve loaded configuration object
-  * @return {object} config - immutable object
-  */
+   * @name getRuntimeConfig
+   * @summary Retrieve loaded configuration object
+   * @return {object} config - immutable object
+   */
   getRuntimeConfig() {
     return Object.assign({}, this.config);
   }
@@ -248,7 +262,7 @@ class HydraExpress {
    * @private
    * @param {string} type - type of message: 'info', 'start', 'error'
    * @param {string} message - message to log
-  * @return {undefined}
+   * @return {undefined}
    */
   log(type, message) {
     let msg = (typeof message === 'object') ? Utils.safeJSONStringify(message) : message;
@@ -285,13 +299,13 @@ class HydraExpress {
   }
 
   /**
-  * @name start
-  * @summary Starts the HydraExpress server
-  * @param {function} resolve - promise resolve
-  * @param {function} _reject - promise reject
-  * @private
-  * @return {undefined}
-  */
+   * @name start
+   * @summary Starts the HydraExpress server
+   * @param {function} resolve - promise resolve
+   * @param {function} _reject - promise reject
+   * @private
+   * @return {undefined}
+   */
   start(resolve, _reject) {
     let serviceInfo;
     return hydra.init(this.config, this.testMode)
@@ -302,7 +316,8 @@ class HydraExpress {
       .then(() => hydra.registerService())
       .then((_serviceInfo) => {
         serviceInfo = _serviceInfo;
-        this.log('start', `${hydra.getServiceName()} (v.${hydra.getInstanceVersion()}) server listening on port ${this.config.hydra.servicePort}`);
+        let secured = this.config.isSecured ? 'secured' : '';
+        this.log('start', `${hydra.getServiceName()} (v.${hydra.getInstanceVersion()}) server listening on ${secured} port ${this.config.hydra.servicePort}`);
         this.log('info', `Using environment: ${this.config.environment}`);
         this.initService();
         return Promise.series(this.registeredPlugins, (plugin) => plugin.onServiceReady());
@@ -310,7 +325,9 @@ class HydraExpress {
       .then(() => Promise.delay(2000))
       .then(() => resolve(serviceInfo))
       .catch((err) => {
-        this.log('error', {err});
+        this.log('error', {
+          err
+        });
         process.emit('cleanup');
       });
   }
@@ -326,20 +343,20 @@ class HydraExpress {
     app.use(responseTime());
 
     /**
-    * @description Stamp every request with the process id that handled it.
-    * @param {object} req - express request object
-    * @param {object} res - express response object
-    * @param {function} next - express next handler
-    */
+     * @description Stamp every request with the process id that handled it.
+     * @param {object} req - express request object
+     * @param {object} res - express response object
+     * @param {function} next - express next handler
+     */
     app.use((req, res, next) => {
       res.set('x-process-id', process.pid);
       next();
     });
 
     /**
-    * @description Fatal error handler.
-    * @param {function} err - error handler function
-    */
+     * @description Fatal error handler.
+     * @param {function} err - error handler function
+     */
     let doOnce = 1;
     process.on('cleanup', () => {
       if (doOnce === 1) {
@@ -379,12 +396,16 @@ class HydraExpress {
     });
 
     /**
-    * Security.
-    */
+     * Security.
+     */
     const ninetyDaysInMilliseconds = moment.duration(90, 'days').asMilliseconds();
     app.use(helmet());
-    app.use(helmet.hidePoweredBy({setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`}));
-    app.use(helmet.hsts({maxAge: ninetyDaysInMilliseconds}));
+    app.use(helmet.hidePoweredBy({
+      setTo: `${hydra.getServiceName()}/${hydra.getInstanceVersion()}`
+    }));
+    app.use(helmet.hsts({
+      maxAge: ninetyDaysInMilliseconds
+    }));
 
     if (this.config.cors) {
       app.use(cors(Object.assign({}, this.config.cors)));
@@ -393,12 +414,19 @@ class HydraExpress {
     }
 
     if (this.config.bodyParser) {
-      let bodyParserConfig = Object.assign({json: {}, urlencoded: {extended: false}}, this.config.bodyParser);
+      let bodyParserConfig = Object.assign({
+        json: {},
+        urlencoded: {
+          extended: false
+        }
+      }, this.config.bodyParser);
       app.use(bodyParser.json(bodyParserConfig.json));
       app.use(bodyParser.urlencoded(bodyParserConfig.urlencoded));
     } else {
       app.use(bodyParser.json());
-      app.use(bodyParser.urlencoded({extended: false}));
+      app.use(bodyParser.urlencoded({
+        extended: false
+      }));
     }
 
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
@@ -407,9 +435,15 @@ class HydraExpress {
     app.use('/', express.static(this.config.appPath));
 
     app.set('port', this.config.servicePort);
-
-    this.server = http.createServer(app);
-
+    if (this.config.isSecured) {
+      const options = {
+        key: this.config.ssl_key,
+        cert: this.config.ssl_cert,
+      }
+      this.server = https.createServer(options, app);
+    } else {
+      this.server = http.createServer(app);
+    }
     /**
      * @param {object} error - error object
      * @description on handler for errors.
@@ -435,8 +469,8 @@ class HydraExpress {
     });
 
     /**
-    * On SIGTERM perform graceful shutdown.
-    */
+     * On SIGTERM perform graceful shutdown.
+     */
     process.on('SIGTERM', () => {
       this.log('error', `Process ${process.pid} recieved SIGTERM - attempting graceful shutdown`);
       this.server.close(() => {
@@ -455,14 +489,14 @@ class HydraExpress {
       });
 
       /**
-      * Post middleware init. Make sure to do this last.
-      */
+       * Post middleware init. Make sure to do this last.
+       */
 
       /**
-      * @param {object} req - express request object
-      * @param {object} res - express response object
-      * @param {function} next - express next handler
-      */
+       * @param {object} req - express request object
+       * @param {object} res - express response object
+       * @param {function} next - express next handler
+       */
       app.use((req, res, next) => {
         let err = new Error('Not Found');
         err.status = ServerResponse.HTTP_NOT_FOUND;
@@ -470,11 +504,11 @@ class HydraExpress {
       });
 
       /**
-      * @param {object} err - express err object
-      * @param {object} req - express request object
-      * @param {object} res - express response object
-      * @param {function} _next - express next handler
-      */
+       * @param {object} err - express err object
+       * @param {object} req - express request object
+       * @param {object} res - express response object
+       * @param {function} _next - express next handler
+       */
       app.use((err, req, res, _next) => {
         let errCode = err.status || ServerResponse.HTTP_SERVER_ERROR;
         if (err.status !== ServerResponse.HTTP_NOT_FOUND) {
@@ -492,12 +526,12 @@ class HydraExpress {
   }
 
   /**
-  * @name _registerRoutes
-  * @summary Register API routes.
-  * @private
-  * @param {object} routes - object with key/value pairs of routeBase: express api object
-  * @return {undefined}
-  */
+   * @name _registerRoutes
+   * @summary Register API routes.
+   * @private
+   * @param {object} routes - object with key/value pairs of routeBase: express api object
+   * @return {undefined}
+   */
   _registerRoutes(routes) {
     let routesList = [];
     Object.keys(routes).forEach((routePath) => {
@@ -541,27 +575,27 @@ class HydraExpress {
 /* ************************************************************************************************ */
 
 /**
-* @name IHydraExpress
-* @summary Interface to a HydraExpress class
-*/
+ * @name IHydraExpress
+ * @summary Interface to a HydraExpress class
+ */
 class IHydraExpress extends HydraExpress {
   /**
-  * @name constructor
-  * @return {undefined}
-  */
+   * @name constructor
+   * @return {undefined}
+   */
   constructor() {
     super();
   }
 
   /**
-  * @name init
-  * @summary Initializes the HydraExpress module
-  * @param {object} config - application configuration object
-  * @param {string} version - version of application
-  * @param {function} registerRoutesCallback - callback function to register routes
-  * @param {function} registerMiddlewareCallback - callback function to register middleware
-  * @return {object} Promise - promise resolving to hydraexpress ready or failure
-  */
+   * @name init
+   * @summary Initializes the HydraExpress module
+   * @param {object} config - application configuration object
+   * @param {string} version - version of application
+   * @param {function} registerRoutesCallback - callback function to register routes
+   * @param {function} registerMiddlewareCallback - callback function to register middleware
+   * @return {object} Promise - promise resolving to hydraexpress ready or failure
+   */
   init(config, version, registerRoutesCallback, registerMiddlewareCallback) {
     if (typeof config === 'string') {
       const configHelper = hydra.getConfigHelper();
@@ -596,59 +630,59 @@ class IHydraExpress extends HydraExpress {
   }
 
   /**
-  * @name shutdown
-  * @summary Shutdown hydra-express safely.
-  * @return {object} Promise - promise resolving to hydraexpress ready or failure
-  */
+   * @name shutdown
+   * @summary Shutdown hydra-express safely.
+   * @return {object} Promise - promise resolving to hydraexpress ready or failure
+   */
   shutdown() {
     return super._shutdown();
   }
 
   /**
-  * @name getExpress
-  * @summary Retrieve the underlying ExpressJS object
-  * @return {object} express - expressjs object
-  */
+   * @name getExpress
+   * @summary Retrieve the underlying ExpressJS object
+   * @return {object} express - expressjs object
+   */
   getExpress() {
     return super.getExpress();
   }
 
   /**
-  * @name getHydra
-  * @summary Retrieve the underlying Hydra object
-  * @return {object} hydra - hydra object
-  */
+   * @name getHydra
+   * @summary Retrieve the underlying Hydra object
+   * @return {object} hydra - hydra object
+   */
   getHydra() {
     return super.getHydra();
   }
 
   /**
-  * @name getRuntimeConfig
-  * @summary Retrieve loaded configuration object
-  * @return {object} config - immutable object
-  */
+   * @name getRuntimeConfig
+   * @summary Retrieve loaded configuration object
+   * @return {object} config - immutable object
+   */
   getRuntimeConfig() {
     return super.getRuntimeConfig();
   }
 
   /**
-  * @name log
-  * @summary Logger. Use to log messages
-  * @param {string} type - type of message: 'fatal', 'error', 'debug', 'info'
-  * @param {string} str - string message to log
-  * @return {undefined}
-  */
+   * @name log
+   * @summary Logger. Use to log messages
+   * @param {string} type - type of message: 'fatal', 'error', 'debug', 'info'
+   * @param {string} str - string message to log
+   * @return {undefined}
+   */
   log(type, str) {
     super.log(type, str);
   }
 
   /**
-  * @name registerRoutes
-  * @summary Register API routes.
-  * @param {string} routeBaseUrl - route base url, ex: /v1/offers
-  * @param {object} api - express api object
-  * @return {undefined}
-  */
+   * @name registerRoutes
+   * @summary Register API routes.
+   * @param {string} routeBaseUrl - route base url, ex: /v1/offers
+   * @param {object} api - express api object
+   * @return {undefined}
+   */
   registerRoutes(routeBaseUrl, api) {
     super._registerRoutes(routeBaseUrl, api);
   }
