@@ -322,7 +322,6 @@ class HydraExpress {
    * @return {undefined}
    */
   initService() {
-    app.use(cors());
     app.use(responseTime());
 
     /**
@@ -388,8 +387,10 @@ class HydraExpress {
 
     if (this.config.cors) {
       app.use(cors(Object.assign({}, this.config.cors)));
+      app.options(cors(Object.assign({}, this.config.cors)));
     } else {
       app.use(cors());
+      app.options(cors());
     }
 
     if (this.config.bodyParser) {
