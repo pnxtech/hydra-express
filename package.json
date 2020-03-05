@@ -39,6 +39,6 @@
     "eslint-plugin-mocha": "4.9.0",
     "mocha": "3.3.0",
     "redis-mock": "0.21.0",
-    "superagent": "3.5.2"
+    "superagent": "5.2.2"
   }
 }
