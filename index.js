@@ -404,7 +404,12 @@ class HydraExpress {
 
     this.registerMiddlewareCallback && this.registerMiddlewareCallback();
 
-    this.config.appPath = path.join('./', 'public');
+    if (this.config.publicFolder) {
+      this.config.appPath = path.join('./', this.config.publicFolder);
+    } else {
+      this.config.appPath = path.join('./', 'public');
+    }
+
     app.use('/', express.static(this.config.appPath));
 
     app.set('port', this.config.servicePort);
