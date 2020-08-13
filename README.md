@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/hydra-express.svg)](https://badge.fury.io/js/hydra-express) <span class="badge-npmdownloads"><a href="https://npmjs.org/package/hydra-express" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/hydra-express.svg" alt="NPM downloads" /></a></span>
 
-Hydra-Express is a light-weight library for building NodeJS and ExpressJS based distributed computing applications. It was announced at [EmpireNode 2016](http://empirenode.org/).
+Hydra-Express is a light-weight library for building NodeJS and ExpressJS based distributed computing applications. It was announced at [EmpireNode 2016](http://www.dev-conferences.com/en/talks/node-microservices-using-hydra-carlos-justiniano/1536).
 
 Hydra offers features such as service discovery, distributed messaging, message load balancing, logging, presence, and health monitoring. 
 
