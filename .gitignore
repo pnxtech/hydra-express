@@ -5,3 +5,4 @@ scratch.*
 node_modules/
 ./properties.js
 .vscode
+yarn.lock
