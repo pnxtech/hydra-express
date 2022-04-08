@@ -537,7 +537,6 @@ class HydraExpress {
   _sendResponse(httpCode, res, data) {
     serverResponse.sendResponse(httpCode, res, data);
   }
-
 }
 
 /* ************************************************************************************************ */
@@ -674,7 +673,6 @@ class IHydraExpress extends HydraExpress {
   sendResponse(httpCode, res, data) {
     super._sendResponse(httpCode, res, data);
   }
-
 }
 
 module.exports = new IHydraExpress;
