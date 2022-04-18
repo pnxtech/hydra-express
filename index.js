@@ -299,6 +299,10 @@ class HydraExpress {
         this.config = config;
         return Promise.series(this.registeredPlugins, (plugin) => plugin.setConfig(config));
       })
+      .catch((err) => {
+        this.log('error', {err});
+        process.exit(1);
+      })
       .then(() => hydra.registerService())
       .then((_serviceInfo) => {
         serviceInfo = _serviceInfo;
@@ -533,7 +537,6 @@ class HydraExpress {
   _sendResponse(httpCode, res, data) {
     serverResponse.sendResponse(httpCode, res, data);
   }
-
 }
 
 /* ************************************************************************************************ */
@@ -670,7 +673,6 @@ class IHydraExpress extends HydraExpress {
   sendResponse(httpCode, res, data) {
     super._sendResponse(httpCode, res, data);
   }
-
 }
 
 module.exports = new IHydraExpress;
